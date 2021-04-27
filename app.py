@@ -1,16 +1,16 @@
-from flask import Flask
+from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
 
 @app.route('/')
-def hello():
-    print(i)
-    return 'Hello, World!'
+def index():
+    return render_template('index.html', name='Admin')
 
 @app.route('/help')
 def helper():
     return 'this is help page'
+
 
 @app.route('/user/<int:id>/')
 def user_profile(id):
