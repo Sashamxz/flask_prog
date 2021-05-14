@@ -1,19 +1,17 @@
 from flask import Flask, request, render_template
-from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
+from flask_bootstrap import Bootstrap
+
 
 
 app = Flask(__name__)
-app.debug = True
-manager = Manager(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shop.db'
-db= SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+db = SQLAlchemy(app)
 
 
-
-@app.route('/')
+@app.route('/loging/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html', name='Admin')
+    return render_template('loging.html')
 
 
 @app.route('/help')
@@ -27,4 +25,4 @@ def user_profile(id):
 
 
 if __name__=='__main__':
-    manager.run()
+    app.run(host='192.168.1.22',debug=True)
