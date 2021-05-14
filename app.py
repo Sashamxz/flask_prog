@@ -13,7 +13,7 @@ db = SQLAlchemy(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    return render_template('base.html')
 
 @app.route('/loging/', methods=['GET', 'POST'])
 def loging():
@@ -31,4 +31,4 @@ def user_profile(id):
 
 
 if __name__=='__main__':
-    app.run(host='192.168.1.22',debug=True)
+    app.run(host='11.0.0.28',debug=True)
