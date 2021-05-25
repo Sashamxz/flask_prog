@@ -31,4 +31,4 @@ def user_profile(id):
 
 
 if __name__=='__main__':
-    app.run(host='11.0.0.28',debug=True)
+    app.run(host='192.168.1.68',debug=True)
