@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, url_for
 from flask.templating import render_template_string
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
@@ -30,5 +30,11 @@ def user_profile(id):
     return "Profile page of user #{}".format(id)
 
 
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('page_404.html', title="Page not found")
+
+
+
 if __name__=='__main__':
-    app.run(host='192.168.1.68',debug=True)
+    app.run(host='192.168.1.22',debug=True)
