@@ -7,9 +7,13 @@ from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
-app.config['SQLALCHEMY_DATABASE_URI'] ='postgres://postgres:123@localhost/test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://postgres:123@localhost/test.db'
 db = SQLAlchemy(app)
 app.config.from_object(__name__)
+
+
+
+
 
 
 class Message(db.Model):
@@ -27,10 +31,10 @@ class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(32), nullable=False)
     
-    message_id = db.Column(db.Integer, db.ForeingKey('massage.id'), nullable=False)
+    message_id = db.Column(db.Integer, db.ForeignKey('massage.id'), nullable=False)
     message = db.relationship('Message', backref=db.backref('tags', lazy=True))
 
-
+db.create_all()
 
 
 
@@ -60,4 +64,4 @@ def page_not_found(error):
 
 
 if __name__=='__main__':
-    app.run(host='192.168.1.22',debug=True)
+    app.run(host='11.0.0.28',debug=True)
