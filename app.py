@@ -2,24 +2,19 @@ from flask import Flask, request, render_template, url_for
 from flask.templating import render_template_string
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
-
+from config import Configuration
 
 
 app = Flask(__name__)
+app.config.from_object(Configuration)
 bootstrap = Bootstrap(app)
-
-app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://postgres:123@localhost/test.db'
 db = SQLAlchemy(app)
-# app.config.from_object(__name__)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-
-db.create_all()
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('base.html')
+
 
 @app.route('/loging/', methods=['GET', 'POST'])
 def loging():

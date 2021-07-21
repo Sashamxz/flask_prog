@@ -11,6 +11,7 @@ def slugyfy(stringg):
  
 
 class Post(db.Model):
+    __table_args__ = {'extend_existing': True} 
     id = db.Column(db.Integer, primary_key=True)    
     title = db.Column(db.String(140))   
     slag = db.Column(db.String(140), unique=True)
@@ -32,7 +33,7 @@ class Post(db.Model):
     def __repr__(self) -> str:
         return '<Post id: {}, title: {}>'.format(self.id, self.title)
 
-    db.create_all()    
+      
 
 
 
