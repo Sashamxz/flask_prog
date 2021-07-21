@@ -1,3 +1,4 @@
+from models import Post
 from flask import Flask, request, render_template, url_for
 from flask.templating import render_template_string
 from flask_sqlalchemy import SQLAlchemy
@@ -13,7 +14,8 @@ db = SQLAlchemy(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('base.html')
+    posts = Post.query.all()
+    return render_template('base.html', post=posts)
 
 
 @app.route('/loging/', methods=['GET', 'POST'])

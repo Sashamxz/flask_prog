@@ -14,7 +14,7 @@ class Post(db.Model):
     __table_args__ = {'extend_existing': True} 
     id = db.Column(db.Integer, primary_key=True)    
     title = db.Column(db.String(140))   
-    slag = db.Column(db.String(140), unique=True)
+    slug = db.Column(db.String(140), unique=True)
     body = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now())
 
