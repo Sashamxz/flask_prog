@@ -1,0 +1,59 @@
+from enum import unique
+from app import db
+from datetime import datetime
+import re
+
+
+
+def slugyfy(stringg):
+    pattern = r'[^\w+]'
+    return re.sub(pattern, '-', stringg)
+ 
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)    
+    title = db.Column(db.String(140))   
+    slag = db.Column(db.String(140), unique=True)
+    body = db.Column(db.Text)
+    created = db.Column(db.DateTime, default=datetime.now())
+
+
+    
+
+    def __init__(self,*args,**kwargs):
+        super(Post, self).__init__(*args, **kwargs)
+        self.generate_slug()
+
+    
+    def generate_slug(self):
+        if self.title:
+            self.slag = slugyfy(self.title)
+
+    def __repr__(self) -> str:
+        return '<Post id: {}, title: {}>'.format(self.id, self.title)
+
+    db.create_all()    
+
+
+
+# class Message(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     text = db.Column(db.String(1024), nullable=False)
+ 
+#     def __init__(self, text,tags):
+#         self.text = text.stript()
+#         self.tags = [
+#            Tag(text=tag.strip()) for tag in tags.split(',')
+#         ]
+     
+
+# class Tag(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     text = db.Column(db.String(32), nullable=False)
+    
+#     message_id = db.Column(db.Integer, db.ForeignKey('massage.id'), nullable=False)
+#     message = db.relationship('Message', backref=db.backref('tags', lazy=True))    
+
+
+
+
