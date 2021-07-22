@@ -1,9 +1,12 @@
-from flask import Flask, request, render_template, url_for
-from flask.templating import render_template_string
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
+# from flask_migrate import Migrate, MigrateCommand
+# from flask_mail import Mail, Message
+# from flask_script import Manager, Command, Shell
+# from flask_login import LoginManager
+import os, config
 from config import Configuration
-from models import Post
 
 
 app = Flask(__name__)
@@ -11,31 +14,12 @@ app.config.from_object(Configuration)
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
 
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    posts = Post.query.all()
-    return render_template('base.html', post=posts)
-
-
-@app.route('/loging/', methods=['GET', 'POST'])
-def loging():
-    return render_template('loging.html')
+# mail = Mail(app)
+# migrate = Migrate(app, db)
+# login_manager = LoginManager(app)
+# login_manager.login_view = 'login'
 
 
-@app.route('/help')
-def helper():
-    return 'this is help page'
-
-
-@app.route('/user/<int:id>/')
-def user_profile(id):
-    return "Profile page of user #{}".format(id)
-
-
-@app.errorhandler(404)
-def page_not_found(error):
-    return render_template('page_404.html', title="Page not found")
 
 
 
