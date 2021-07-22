@@ -1,9 +1,9 @@
-from models import Post
 from flask import Flask, request, render_template, url_for
 from flask.templating import render_template_string
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from config import Configuration
+from models import Post
 
 
 app = Flask(__name__)

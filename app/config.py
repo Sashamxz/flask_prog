@@ -4,6 +4,7 @@ import os
 
 class Configuration(object):
     DEBUG = True
+    SECRET_KEY = 'itsareeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeasdasdasdadaw234234!@rerF'
     SQLALCHEMY_DATABASE_URI ='postgresql://postgres:123@localhost/test'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
