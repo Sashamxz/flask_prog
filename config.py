@@ -12,18 +12,6 @@ class Configuration(object):
     # SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     # def __init__(self, app):
     #     self.app = app
 
