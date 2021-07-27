@@ -5,14 +5,24 @@ from flask_bootstrap import Bootstrap
 # from flask_mail import Mail, Message
 # from flask_script import Manager, Command, Shell
 # from flask_login import LoginManager
-import os, config
-from config import Configuration
+from config import configs
 
 
-app = Flask(__name__)
-app.config.from_object(Configuration)
-bootstrap = Bootstrap(app)
-db = SQLAlchemy(app)
+bootstrap = Bootstrap()
+db = SQLAlchemy()
+
+
+def create_app(test):
+    app = Flask(__name__)
+    app.config.from_object(config['test'])
+    configs['test'].init_app(app)
+    bootstrap.init_app(app)
+    # mail.init_app(app)
+    # moment.init_app(app)
+    db.init_app(app)
+    # login_manager.init_app(app)
+    # pagedown.init_app(app)
+    return app
 
 # mail = Mail(app)
 # migrate = Migrate(app, db)
