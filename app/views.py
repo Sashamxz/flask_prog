@@ -11,8 +11,16 @@ from models import Post
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    # posts = Post.query.all()
-    return render_template('base.html' )#post=posts
+    posts = Post.query.all()
+    return render_template('index.html' ,post=posts)
+
+
+
+@app.route('/<slug>')
+def post_detail(slug):
+    post = Post.query.filter(Post.slug==slug).first()
+    return render_template('index.html', post= post)
+
 
 
 @app.route('/loging/', methods=['GET', 'POST'])

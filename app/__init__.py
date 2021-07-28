@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+
 from flask_bootstrap import Bootstrap
 # from flask_migrate import Migrate, MigrateCommand
 # from flask_mail import Mail, Message
@@ -12,7 +12,7 @@ from config import Configuration
 app = Flask(__name__)
 app.config.from_object(Configuration)
 bootstrap = Bootstrap(app)
-db = SQLAlchemy(app)
+
 
 # mail = Mail(app)
 # migrate = Migrate(app, db)
