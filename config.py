@@ -1,38 +1,40 @@
 import os
+import sys
 
-# basedir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+
+
+# Platforma
+WIN = sys.platform.startswith('win')
+if WIN:
+    prefix = 'sqlite:///'
+else:
+    prefix = 'sqlite:////'
 
 class Configuration(object):
     DEBUG = True
-    SECRET_KEY = 'itsareeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeasdasdasdadaw234234!@rerF'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI ='postgresql://postgres:123@localhost/test'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
-    # basedir = os.path.abspath(os.path.dirname(__file__))
-    # SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
 
-    # def __init__(self, app):
-    #     self.app = app
 
-    # def productionConfig(self):    
-    #     self.app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://postgres:123@localhost/test.db'
-    #     self.app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    #     self.app.config["SECRET_KEY"] = "FDSAFASFDASFDASGBFRSHBDSSFASDF"
-    #     self.app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size' : 100, 'pool_recycle' : 280}
-    #     self.app.config["WTF_CSRF_ENABLED"] = False
-    #     return self.app
+class DevelopmentConfig(Configuration):
+    SQLALCHEMY_DATABASE_URI = prefix + os.path.join(basedir, 'data-dev.db')
 
-    # def developmentConfig(self):    
-    #     self.app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://postgres:123@localhost/test.db'
-    #     self.app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    #     self.app.config["SECRET_KEY"] = "FDSAFASFDASFDASGBFRSHBDSSFASDF"
-    #     self.app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size' : 100, 'pool_recycle' : 280}
-    #     self.app.config["WTF_CSRF_ENABLED"] = False
-    #     return self.app
 
-    # def testConfig(self):
-    #     self.app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(basedir, 'test.db')
-    #     self.app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    #     self.app.config["WTF_CSRF_ENABLED"] = False
-    #     return self.app
+class TestingConfig(Configuration):
+    DEBUG = True
+    WTF_CSRF_ENABLED = False
+    SQLALCHEMY_DATABASE_URI ='postgresql://postgres:123@localhost/test'
+
+
+class ProductionConfig(Configuration):
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', prefix + os.path.join(basedir, 'data.db'))
+
+
+configs = {
+    'development': DevelopmentConfig,
+    'testing': TestingConfig,
+    'production': ProductionConfig}
