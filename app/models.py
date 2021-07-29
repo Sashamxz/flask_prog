@@ -1,8 +1,17 @@
 from enum import unique
-from app import db
+from app.db import db
 from datetime import datetime
 import re
 
+
+
+
+class Permission:
+    FOLLOW = 1
+    COMMENT = 2
+    WRITE = 4
+    MODERATE = 8
+    ADMIN = 16
 
 
 def slugyfy(stringg):
@@ -11,7 +20,7 @@ def slugyfy(stringg):
  
 
 class Post(db.Model):
-    __table_args__ = {'extend_existing': True} 
+    # __table_args__ = {'extend_existing': True} 
     id = db.Column(db.Integer, primary_key=True)    
     title = db.Column(db.String(140))   
     slug = db.Column(db.String(140), unique=True)

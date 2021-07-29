@@ -1,15 +1,23 @@
 #!/usr/bin/env python
 
 import os
-from flask.config import Config
+from dotenv import load_dotenv
+
+
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+
+
 from app import create_app, db
-from flask_script import Manager, Shell
-# from app.models import User, Post, Tag, Category, Employee, Feedback
+from flask_migrate import Migrate, upgrade
+from app.models import Post
 # from flask_migrate import MigrateCommand
 
 
-app = create_app("test")
-manager = Manager(app)
+
+app = create_app(config_name='testing')
+manager = Migrate(app,db)
 
 
 # def make_shell_context():
