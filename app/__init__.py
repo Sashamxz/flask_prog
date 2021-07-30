@@ -27,6 +27,11 @@ def create_app(config_name=None):
     # moment.init_app(app)
     db.init_app(app)
     
+
+    from .main import main as main_blueprint
+    app.register_blueprint(main_blueprint)
+
+
     return app
 
 
