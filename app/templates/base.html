@@ -39,17 +39,22 @@
           </div>
         </div>
       </nav>
-      {% block body %}{% endblock %}
-<!-- 
-      <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
-        <div class="col-md-5 p-lg-5 mx-auto my-5">
-          <h1 class="display-4 fw-normal">Punny headline</h1>
-          <p class="lead fw-normal">And an even wittier subheading to boot. Jumpstart your marketing efforts with this example based on Apple’s marketing pages.</p>
-          <a class="btn btn-outline-secondary" href="#">Coming soon</a>
-        </div>d
-        <div class="product-device shadow-sm d-none d-md-block"></div>
-        <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
-      </div> -->
+      
+
+      <div class="container">
+          <div class="row">
+              <h1>
+                {% block content_title %}
+                
+                {% endblock %}
+              </h1>
+              {% block content %}
+                
+              {% endblock %} 
+          </div>
+      
+      
+      </div> 
     
     <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>

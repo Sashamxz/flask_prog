@@ -24,4 +24,4 @@ manager = Migrate(app,db)
 #     return dict(app=app, db=db, User=User, Post=Post, Tag=Tag,  Category=Category, Employee=Employee, Feedback=Feedback)
 
 if __name__ == '__main__':
-    manager.run()
+    app.run()
