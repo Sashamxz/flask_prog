@@ -5,33 +5,35 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 
-# Platforma
-WIN = sys.platform.startswith('win')
-if WIN:
-    prefix = 'sqlite:///'
-else:
-    prefix = 'sqlite:////'
+# # Platforma
+# WIN = sys.platform.startswith('win')
+# if WIN:
+#     prefix = 'sqlite:///'
+# else:
+#     prefix = 'sqlite:////'
 
 class Config(object):
     DEBUG = True
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI ='postgresql://postgres:123@localhost/test'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
+    
+    @staticmethod
+    def init_app(app):
+        pass
 
 
 class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = prefix + os.path.join(basedir, 'data-dev.db')
-
-
-class TestingConfig(Config):
     DEBUG = True
     WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI ='postgresql://postgres:123@localhost/test'
 
+class TestingConfig(Config):
+    pass
+
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', prefix + os.path.join(basedir, 'data.db'))
+    pass
 
 
 configs = {

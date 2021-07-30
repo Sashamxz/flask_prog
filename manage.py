@@ -16,7 +16,7 @@ from app.models import Post
 
 
 
-app = create_app(config_name='testing')
+app = create_app(os.getenv('development'))
 manager = Migrate(app,db)
 
 
