@@ -11,17 +11,21 @@ if os.path.exists(dotenv_path):
 
 from app import create_app, db
 from flask_migrate import Migrate, upgrade
-from app.models import Post
-# from flask_migrate import MigrateCommand
 
 
 
-app = create_app(os.getenv('development'))
-manager = Migrate(app,db)
+
+
+app = create_app('development')
+
 
 
 # def make_shell_context():
-#     return dict(app=app, db=db, User=User, Post=Post, Tag=Tag,  Category=Category, Employee=Employee, Feedback=Feedback)
+#     return dict(app=app, db=db, Post=Post)
+
+
+
+
 
 if __name__ == '__main__':
     app.run()

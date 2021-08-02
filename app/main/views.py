@@ -14,7 +14,7 @@ from ..models import Post
 @main.route('/', methods=['GET', 'POST'])
 def index():
     posts = Post.query.all()
-    return render_template('index.html' ,post=posts)
+    return render_template('index.html' ,posts=posts)
 
 
 

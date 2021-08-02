@@ -12,10 +12,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # else:
 #     prefix = 'sqlite:////'
 
-class Config(object):
+class Config():
     DEBUG = True
     SECRET_KEY = os.environ.get('SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI ='postgresql://postgres:123@localhost/test'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     @staticmethod
