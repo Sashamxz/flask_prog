@@ -1,6 +1,7 @@
-from . import main
+
 from flask import render_template, request, redirect, url_for, flash, make_response, session, current_app
 from flask_login import login_required, login_user,current_user, logout_user
+from . import main
 from .. import db
 from ..models import Post
 # from .models import User, Post, Category, Feedback, db
@@ -14,7 +15,7 @@ from ..models import Post
 @main.route('/', methods=['GET', 'POST'])
 def index():
     posts = Post.query.all()
-    return render_template('index.html' ,posts=posts)
+    return render_template('index.html',posts=posts)
 
 
 

@@ -24,7 +24,9 @@ def create_app(config_name=None):
 
     app = Flask(__name__)
     app.config.from_object(configs['development'])
+    configs['development'].init_app(app)
     bootstrap.init_app(app)
+
     # mail.init_app(app)
     # moment.init_app(app)
     
