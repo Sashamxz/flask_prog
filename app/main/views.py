@@ -4,7 +4,7 @@ from flask_login import login_required, login_user,current_user, logout_user
 from . import main
 from .. import db
 from ..models import Post
-# from .models import User, Post, Category, Feedback, db
+
 # from .forms import ContactForm, LoginForm
 # from .utils import send_mail
 
@@ -22,7 +22,7 @@ def index():
 @main.route('/<slug>')
 def post_detail(slug):
     post = Post.query.filter(Post.slug==slug).first()
-    return render_template('post_d.html' ,post= post)
+    return render_template('post_d.html' , post = post)
 
 
 
@@ -42,5 +42,5 @@ def user_profile(id):
 
 
 @main.errorhandler(404)
-def page_not_found(error):
-    return render_template('page_404.html', title="Page not found")
+def page_not_found(e):
+    return render_template('page_404.html'),404
