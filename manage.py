@@ -9,23 +9,28 @@ if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
 
-from app import create_app, db
-from flask_migrate import Migrate, upgrade
+import sys 
 
+from app import create_app, db
+from flask_migrate import Migrate
+from flask_script import Manager
 
 
 
 
 app = create_app('development')
-
-
-
-# def make_shell_context():
-#     return dict(app=app, db=db, Post=Post)
+migrate = Migrate(app, db)
+manager = Manager(app)
 
 
 
 
+
+# @app.cli.command()
+# def deploy():
+#     """Run deployment tasks."""
+#     # migrate database to latest revision
+#     upgrade()
 
 if __name__ == '__main__':
-    app.run()
+    manager.run()

@@ -22,7 +22,7 @@ def index():
 @main.route('/<slug>')
 def post_detail(slug):
     post = Post.query.filter(Post.slug==slug).first()
-    return render_template('index.html', post= post)
+    return render_template('post_d.html' ,post= post)
 
 
 

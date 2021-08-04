@@ -15,7 +15,7 @@ class Permission:
     ADMIN = 16
 
 
-def slugyfy(stringg):
+def slugify(stringg):
     pattern = r'[^\w+]'
     return re.sub(pattern, '-', stringg)
  
@@ -38,9 +38,9 @@ class Post(db.Model):
     
     def generate_slug(self):
         if self.title:
-            self.slag = slugyfy(self.title)
+            self.slug = slugify(self.title)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return '<Post id: {}, title: {}>'.format(self.id, self.title)
 
       

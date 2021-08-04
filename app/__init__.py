@@ -29,8 +29,8 @@ def create_app(config_name=None):
 
     # mail.init_app(app)
     # moment.init_app(app)
-    
-    db.init_app(app)
+    with app.app_context():
+        db.init_app(app)
     
     migrate.init_app(app, db)
     from .main import main as main_blueprint
