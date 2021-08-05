@@ -41,6 +41,6 @@ def user_profile(id):
     return "Profile page of user #{}".format(id)
 
 
-@main.errorhandler(404)
+@main.app_errorhandler(404)
 def page_not_found(e):
     return render_template('page_404.html'),404

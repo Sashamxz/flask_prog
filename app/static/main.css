@@ -1,0 +1,11 @@
+.image { 
+    position: relative; 
+    
+    background-size: 100%;
+    width: 100%; /* for IE 6 */
+ }
+ 
+h3 { 
+    position: sticky;
+    top: 20px;
+ }
