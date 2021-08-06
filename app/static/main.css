@@ -1,11 +1,32 @@
-.image { 
-    position: relative; 
+
+<style>
+div#tekst_sverhu_kartinki {
+
+    position: relative;
     
-    background-size: 100%;
-    width: 100%; /* for IE 6 */
- }
- 
-h3 { 
-    position: sticky;
-    top: 20px;
- }
+    }
+    
+    .tekst_sverhu_kartinki_1 {
+    
+    position: absolute;
+    
+    bottom: 10%;
+    
+    text-transform: uppercase;
+    
+    color: #c9c9c9;
+    
+    width: 300px;
+    
+    }
+    
+    .tekst_sverhu_kartinki_1 span {
+    
+    font: bold 24px/44px Helvetica, Sans-Serif;
+    
+    background: #00000094;
+    
+    padding: 8px;
+    
+}
+</style>   
