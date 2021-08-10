@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    {{ pots.title }}
+  
+    {{ post.title }}
+
 {% endblock %}
 
 {% block content_title %}
@@ -11,5 +13,7 @@
 {% endblock %}    
 
 {% block content %}
-    {{ pots.body }}
+   
+    {{ post.body }}
+
 {% endblock %}

@@ -7,8 +7,9 @@
 {% block content %}
 
     {% for post in posts %}
+        
         <p>
-            {{ post.title }}
+            <a href="{{ url_for('main.post_detail', slug = post.slug) }}" style="text-decoration:none;"> {{ post.title }} </a>
         </p>
 
 

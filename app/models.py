@@ -45,6 +45,22 @@ class Post(db.Model):
 
       
 
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(32), nullable=False)
+    
+    message_id = db.Column(db.Integer, db.ForeignKey('massage.id'), nullable=False)
+    message = db.relationship('Message', backref=db.backref('tags', lazy=True))    
+
+
+
+
+
+
+
+
+
+
 
 
 # class Message(db.Model):
@@ -57,14 +73,5 @@ class Post(db.Model):
 #            Tag(text=tag.strip()) for tag in tags.split(',')
 #         ]
      
-
-# class Tag(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     text = db.Column(db.String(32), nullable=False)
-    
-#     message_id = db.Column(db.Integer, db.ForeignKey('massage.id'), nullable=False)
-#     message = db.relationship('Message', backref=db.backref('tags', lazy=True))    
-
-
 
 
