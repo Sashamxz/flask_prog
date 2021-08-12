@@ -7,6 +7,14 @@ import re
 
 
 
+post_tags = db.Table('post_tags',
+                     db.Column('post_id', db.Integer, db.ForeignKey('post.id')),  
+                     db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'))  
+
+    )
+
+
+
 class Permission:
     FOLLOW = 1
     COMMENT = 2
@@ -35,6 +43,7 @@ class Post(db.Model):
         super(Post, self).__init__(*args, **kwargs)
         self.generate_slug()
 
+    tags = db.relationship('Tag', secondary = post_tags , backref=db.backref('posts', lazy ='dynamic') )
     
     def generate_slug(self):
         if self.title:
@@ -47,12 +56,15 @@ class Post(db.Model):
 
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String(32), nullable=False)
-    
-    message_id = db.Column(db.Integer, db.ForeignKey('massage.id'), nullable=False)
-    message = db.relationship('Message', backref=db.backref('tags', lazy=True))    
+    name = db.Column(db.String(32), nullable=False)
+    slug = db.Column(db.String(140), unique=True)
+    def __init__(self,*args,**kwargs):
+        super(Tag, self).__init__(*args, **kwargs)
+        self.slug = slugify(self.name)
 
-
+  
+    def __repr__(self):
+        return '<Tag id: {}, name: {}>'.format(self.id, self.name)
 
 
 
