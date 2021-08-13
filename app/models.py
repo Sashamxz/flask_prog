@@ -1,9 +1,8 @@
 from flask import current_app, request, url_for
 from enum import unique
-from . import db
 from datetime import datetime
 import re
-
+from . import db
 
 
 
