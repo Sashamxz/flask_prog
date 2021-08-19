@@ -3,6 +3,7 @@ from flask import render_template, request, redirect, url_for, flash, make_respo
 from flask_login import login_required, login_user,current_user, logout_user
 from . import main
 from .. import db
+from .forms import PostForm
 from ..models import Post
 
 # from .forms import ContactForm, LoginForm
@@ -10,11 +11,18 @@ from ..models import Post
 
 
 
-
+main.route('/create')
+def create_post():
+    form = PostForm()
+    return render_template('create_post.html', form = form)
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    posts = Post.query.all()
+    q = request.args.get('q')
+    if q:
+        posts = Post.query.filter(Post.title.contains(q) | Post.body.contains(q)).all()
+    else:    
+        posts = Post.query.all()
     return render_template('index.html',posts=posts)
 
 
