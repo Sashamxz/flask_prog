@@ -14,7 +14,8 @@ from ..models import Post
 main.route('/create')
 def create_post():
     form = PostForm()
-    return render_template('create_post.html', form = form)
+    return render_template('create_post.html', form=form)
+
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
