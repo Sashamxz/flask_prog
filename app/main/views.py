@@ -11,8 +11,21 @@ from ..models import Post
 
 
 
-main.route('/create')
+@main.route('/create', methods=['POST','GET'])
 def create_post():
+    if request.method == 'POST':
+        title = request.form['title']
+        body = request.form['body']
+        
+        try:
+            post = Post(title=title, body=body)
+            db.session.add(post)
+            db.session.commit()
+        except:
+            print('error db.add 498e238e')    
+
+        return redirect( url_for('main.index'))
+
     form = PostForm()
     return render_template('create_post.html', form=form)
 
@@ -23,7 +36,7 @@ def index():
     if q:
         posts = Post.query.filter(Post.title.contains(q) | Post.body.contains(q)).all()
     else:    
-        posts = Post.query.all()
+        posts = Post.query.order_by(Post.created.desc())
     return render_template('index.html',posts=posts)
 
 
