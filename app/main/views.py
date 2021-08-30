@@ -5,7 +5,7 @@ from . import main
 from .. import db
 from .forms import PostForm
 from ..models import Post
-
+from ..calendar import  show_calendar
 # from .forms import ContactForm, LoginForm
 # from .utils import send_mail
 
@@ -37,8 +37,14 @@ def index():
         posts = Post.query.filter(Post.title.contains(q) | Post.body.contains(q)).all()
     else:    
         posts = Post.query.order_by(Post.created.desc())
+    
     return render_template('index.html',posts=posts)
 
+
+
+@main.route('/', methods=['GET'])
+def date_today():
+    show_calendar()
 
 
 @main.route('/<slug>')
