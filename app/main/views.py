@@ -1,4 +1,5 @@
 
+from calendar import calendar
 from flask import render_template, request, redirect, url_for, flash, make_response, session, current_app
 from flask_login import login_required, login_user,current_user, logout_user
 from . import main
@@ -42,10 +43,11 @@ def index():
 
 
 
-@main.route('/', methods=['GET'])
+@main.route('/calendar', methods=['GET'])
 def date_today():
     show_calendar()
-    return render_template('index.html')
+    print(calendarq)
+    return render_template('calendar.html')
 
 @main.route('/<slug>')
 def post_detail(slug):
