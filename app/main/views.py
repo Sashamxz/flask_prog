@@ -45,9 +45,8 @@ def index():
 
 @main.route('/calendar', methods=['GET'])
 def date_today():
-    show_calendar()
-    print(calendarq)
-    return render_template('calendar.html')
+    a = 1
+    return render_template(show_calendar(),'calendar_d.html')
 
 @main.route('/<slug>')
 def post_detail(slug):
