@@ -6,7 +6,6 @@ from . import main
 from .. import db
 from .forms import PostForm
 from ..models import Post
-from ..calendar import  show_calendar
 # from .forms import ContactForm, LoginForm
 # from .utils import send_mail
 
@@ -42,11 +41,6 @@ def index():
     return render_template('index.html',posts=posts)
 
 
-
-@main.route('/calendar', methods=['GET'])
-def date_today():
-    a = 1
-    return render_template(show_calendar(),'calendar_d.html')
 
 @main.route('/<slug>')
 def post_detail(slug):

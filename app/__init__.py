@@ -33,9 +33,11 @@ def create_app(config_name=None):
         db.init_app(app)
     
     migrate.init_app(app, db)
+    #blueprint
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
-
+    from .calend import calend as calend_blueprint
+    app.register_blueprint(calend_blueprint, url_prefix='/calendar')
 
     return app
 
