@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  
+    Calendar
+
+{% endblock %}
+
+{% block content_title %}
+     
+     Date
+        
+{% endblock %}    
+
+{% block content %}
+    {% for month in show  %}
+    <div>
+        <hr>
+        
+            <table  cellpadding="0"  {{ create_c()|safe }}></table> 
+        
+        <hr>
+    </div>      
+         
+    {%endfor%}
+{% endblock %}

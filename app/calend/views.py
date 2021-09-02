@@ -4,9 +4,10 @@ import calendar
 from . import calend
 
 
-@calend.route('/date', methods=['GET', 'POST'])
+@calend.route('/', methods=['GET'])
 def show_calendar():
-    a = calendar.LocaleHTMLCalendar(locale='ru_RU.UTF-8')
-    with open('/home/req/github/flask_proj/app/templates/calendar/calendar_d.html', 'w') as html_d:
-        print(a.formatyear(2014, width=4), file=html_d)
-    return render_template('calendar/calendar_d.html')
+    def create_calendar():    
+        aln = calendar.LocaleHTMLCalendar(locale="en_US.UTF-8")
+        show =  aln.formatyear(2021, width=4)
+        return show
+    return render_template('calendar/calendar_d.html', create_c = create_calendar)
