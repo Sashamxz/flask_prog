@@ -13,14 +13,26 @@
 {% endblock %}    
 
 {% block content %}
-    {% for month in show  %}
+    
+  
     <div>
+        <style>
+
+            table {
+             line-height: 1.9; 
+             word-spacing: 30px;
+             letter-spacing: 2px;
+            }
+            
+            </style>
+        
+        
         <hr>
         
-            <table  cellpadding="0"  {{ create_c()|safe }}></table> 
+            <table  cellpadding="8"  {{ create_c()|safe }}></table> 
         
         <hr>
     </div>      
          
-    {%endfor%}
+    
 {% endblock %}

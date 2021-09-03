@@ -20,7 +20,7 @@
     <ul class="navbar-nav me-auto mb-2 mb-md-0">
       
       <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="{{ url_for('main.index') }}">Flask</a>
+        <a class="nav-link active" aria-current="page" href="{{ url_for('main.home_view') }}">Flask</a>
       </li>
       
       <li class="nav-item">
@@ -30,7 +30,9 @@
       <li class="nav-item">
         <a class="nav-link active" href="{{ url_for('main.create_post') }} ">Create post</a>
       </li>
-    
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{ url_for('calend.show_calendar') }}">Calendar</a>
+      </li>
     </ul>
     
     <form class="navbar-form navbar-left" method="GET">

@@ -11,6 +11,14 @@ from ..models import Post
 
 
 
+
+@main.route('/home')
+def home_view():
+    home = "everyone"
+    return render_template('home.html', home = home)
+
+
+
 @main.route('/create', methods=['POST','GET'])
 def create_post():
     if request.method == 'POST':
