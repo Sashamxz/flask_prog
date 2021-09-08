@@ -12,10 +12,10 @@ from ..models import Post
 
 
 
-@main.route('/home')
+@main.route('/home/')
 def home_view():
     home = "everyone"
-    return render_template('home.html', home = home)
+    return render_template('block.html', home = home)
 
 
 
