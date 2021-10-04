@@ -12,11 +12,6 @@ from ..models import Post
 
 
 
-@main.route('/home/')
-def home_view():
-    home = "everyone"
-    return render_template('block.html', home = home)
-
 
 
 @main.route('/create', methods=['POST','GET'])
@@ -38,7 +33,7 @@ def create_post():
     return render_template('create_post.html', form=form)
 
 
-@main.route('/', methods=['GET', 'POST'])
+@main.route('/blog', methods=['GET', 'POST'])
 def index():
     q = request.args.get('q')
     if q:
@@ -48,6 +43,11 @@ def index():
     
     return render_template('index.html',posts=posts)
 
+
+@main.route('/')
+def home_view():
+    home = "everyone"
+    return render_template('block.html', home = home)
 
 
 @main.route('/<slug>')

@@ -4,7 +4,7 @@ import calendar
 from . import calend
 
 
-@calend.route('/', methods=['GET'])
+@calend.route('/calendar', methods=['GET'])
 def show_calendar():
     def create_calendar():    
         aln = calendar.LocaleHTMLCalendar(locale="en_US.UTF-8")
