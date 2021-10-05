@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    {% for post in posts %}
+    {% for post in pages.items %}
         
         <p>
             <a href="{{ url_for('main.post_detail', slug = post.slug) }}" style="text-decoration:none;"> {{ post.title }} </a>
@@ -15,7 +15,16 @@
 
     {% endfor %}
 
-        
 
+    <nav>
+        <ul class="pagination pagination-sm">
+         
+          {% for page in pages.iter_pages() %}
+          <li class="page-item"  {% if not pages.has_prev %} class="page-item disabled"{% endif %}>
+                <a class="page-link" href="/blog?page={{ page }}">{{ page }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
 
+    
 {% endblock %}    
