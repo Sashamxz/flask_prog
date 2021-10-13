@@ -25,7 +25,11 @@ class Config():
 class DevelopmentConfig(Config):
     DEBUG = True
     WTF_CSRF_ENABLED = False
-    SQLALCHEMY_DATABASE_URI ='postgresql://postgres:123@localhost/test'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL')
+    # SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') 
+    # or \
+        # 'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+
 
 class TestingConfig(Config):
     pass
@@ -37,5 +41,5 @@ class ProductionConfig(Config):
 
 configs = {
     'development': DevelopmentConfig,
-    'testing': TestingConfig,
+    'testing'    : TestingConfig,
     'production': ProductionConfig}
