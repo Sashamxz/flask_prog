@@ -6,15 +6,14 @@ from . import main
 from .. import db
 from .forms import PostForm
 from ..models import Post
-# from .forms import ContactForm, LoginForm
-# from .utils import send_mail
-
+from flask_security import login_required
 
 
 
 
 
 @main.route('/create', methods=['POST','GET'])
+@login_required
 def create_post():
     if request.method == 'POST':
         title = request.form['title']
@@ -35,6 +34,7 @@ def create_post():
 
 
 @main.route('/<slug>/edit/', methods=['POST', 'GET'])
+@login_required
 def edit_post(slug):
     post = Post.query.filter(Post.slug==slug).first()
 

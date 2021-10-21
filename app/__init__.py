@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_security.core import Security
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 import os
@@ -6,7 +7,7 @@ from config import DevelopmentConfig, configs
 from flask_migrate import Migrate
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-
+from flask_security import SQLAlchemyUserDatastore
 
 
 bootstrap = Bootstrap()
@@ -16,7 +17,9 @@ db = SQLAlchemy()
 # login_manager.login_view = 'login'
 migrate = Migrate()
 
-from app.models import Post, Tag 
+from app.models import Post, Role, Tag, User 
+
+user_datatore = SQLAlchemyUserDatastore(db, User, Role)
 
 def create_app(config_name=None):
   
@@ -40,6 +43,8 @@ def create_app(config_name=None):
     app.register_blueprint(main_blueprint)
     from .calend import calend as calend_blueprint
     app.register_blueprint(calend_blueprint, url_prefix='/calendar')
+    #user_create
+    security = Security(app,user_datatore)
 
     return app
 
