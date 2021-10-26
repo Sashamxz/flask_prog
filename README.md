@@ -11,9 +11,9 @@ $ sudo apt-get install python-dev
 Python Packages using pip and installing a virtual environment.
 
 ```
-$ virtualenv venv
+$ virtualenv env
 
-$ source venv/bin/activate
+$ source env/bin/activate
 
-(venv)$ pip install -r requirements.txt
+(env)$ pip install -r requirements.txt
 ```
