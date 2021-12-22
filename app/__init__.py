@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_security.core import Security
+from flask_security import Security
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 import os
@@ -19,7 +19,7 @@ migrate = Migrate()
 
 from app.models import Post, Role, Tag, User 
 
-user_datatore = SQLAlchemyUserDatastore(db, User, Role)
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
 def create_app(config_name=None):
   
@@ -30,8 +30,8 @@ def create_app(config_name=None):
     
     # mail.init_app(app)
     # moment.init_app(app)
-    with app.app_context():
-        db.init_app(app)
+    
+    db.init_app(app)
        
     admin = Admin(app)
     admin.add_view(ModelView(Post, db.session))
@@ -44,7 +44,7 @@ def create_app(config_name=None):
     from .calend import calend as calend_blueprint
     app.register_blueprint(calend_blueprint, url_prefix='/calendar')
     #user_create
-    security = Security(app,user_datatore)
+    security = Security(app, user_datastore)
 
     return app
 
