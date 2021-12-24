@@ -2,13 +2,11 @@ from flask import Flask
 from flask_security import Security
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
-import os
-from config import DevelopmentConfig, configs
 from flask_migrate import Migrate
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_security import SQLAlchemyUserDatastore
-
+from config import  config
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
@@ -24,8 +22,8 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 def create_app(config_name=None):
   
     app = Flask(__name__)
-    app.config.from_object(configs['development'])
-    configs['development'].init_app(app)
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
     bootstrap.init_app(app)
     
     # mail.init_app(app)

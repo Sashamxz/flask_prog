@@ -1,2 +1,3 @@
-#!/bin/sh
-source env/bin/activate
+#!/bin/bash
+
+./source env/bin/activate
