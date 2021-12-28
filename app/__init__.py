@@ -1,11 +1,14 @@
 from flask import Flask
-from flask_security import Security
+from flask import redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_migrate import Migrate
 from flask_admin import Admin
+from flask_admin import AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from flask_security import SQLAlchemyUserDatastore
+from flask_security import Security
+from flask_security import current_user
 from config import  config
 
 bootstrap = Bootstrap()
@@ -19,6 +22,25 @@ from app.models import Post, Role, Tag, User
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
+
+
+class AdminView(ModelView):
+    def is_accessible(self):
+        return current_user.has_role('admin')
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect( url_for('security.login', next =request.url))       
+
+
+class HomeAdminView(AdminIndexView):
+    def is_accessible(self):
+        return current_user.has_role('admin')
+
+    def inaccessible_callback(self, name,  **kwargs):
+        return redirect( url_for('security.login', next =request.url))       
+
+
+
 def create_app(config_name=None):
   
     app = Flask(__name__)
@@ -31,9 +53,9 @@ def create_app(config_name=None):
     
     db.init_app(app)
        
-    admin = Admin(app)
-    admin.add_view(ModelView(Post, db.session))
-    admin.add_view(ModelView(Tag, db.session))
+    admin = Admin(app, 'FlaskApp', url='/', index_view=HomeAdminView(name='Home'))
+    admin.add_view(AdminView(Post, db.session))
+    admin.add_view(AdminView(Tag, db.session))
     admin.init_app
     migrate.init_app(app, db)
     #blueprint
