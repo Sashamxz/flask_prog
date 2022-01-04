@@ -15,13 +15,9 @@ from flask_migrate import Migrate
 from flask_script import Manager
 
 
-
-
 app = create_app('development')
 migrate = Migrate(app, db)
 manager = Manager(app)
-
-
 
 
 
