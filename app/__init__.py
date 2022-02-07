@@ -63,8 +63,8 @@ class TagAdminView(AdminMixin, BaseModelView):
 
 def create_app(config_name=None): 
     app = Flask(__name__)
-    app.config.from_object(config[config_name])
-    config[config_name].init_app(app)
+    app.config.from_object(config['development'])
+    config['development'].init_app(app)
     bootstrap.init_app(app)
     
     # mail.init_app(app)

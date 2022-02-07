@@ -93,8 +93,15 @@ class Role(db.Model, RoleMixin):
 
 
 
+def init_db():
+    db.create_all()
+
+if __name__ == '__main__':
+    init_db()
 
 
+
+    
 # class Message(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
 #     text = db.Column(db.String(1024), nullable=False)

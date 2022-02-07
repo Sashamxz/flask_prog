@@ -1,3 +1,6 @@
 #!/bin/bash
+source env/bin/activate
 
-./source env/bin/activate
+
+
+exec gunicorn -b :5000 --access-logfile - --error-logfile - flask_proj:app

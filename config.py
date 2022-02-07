@@ -1,8 +1,7 @@
 import os
-import sys
 
-basedir = os.path.join(os.path.dirname(__file__), '.env')
 
+basedir = os.path.join(os.path.dirname(__file__))
 
 
 # # Platforma
@@ -12,7 +11,7 @@ basedir = os.path.join(os.path.dirname(__file__), '.env')
 # else:
 #     prefix = 'sqlite:////'
 
-class Config():
+class Config:
     DEBUG = True
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -23,14 +22,15 @@ class Config():
 
 
 class DevelopmentConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') 
+    #or \
+    #    'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
     DEBUG = True
     WTF_CSRF_ENABLED = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL')
+    # SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL')
     SECURITY_PASSWORD_SALT = os.environ.get('SALT')
     SECURITY_PASSWORD_HASH = 'bcrypt'
-    # SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') 
-    # or \
-        # 'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+    
 
 
 class TestingConfig(Config):

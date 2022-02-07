@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  flask-proj:
+    build: .
+    ports:
+      - "8000:5000"
+    env_file: .env
+    restart: always
+    depends_on:
+      - db
+    
+  db:
+        image: postgres
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=1234
+            - POSTGRES_DB=test
+        volumes:
+            - db-data:/var/lib/postgresql/data
+
+volumes:
+    db-data:
