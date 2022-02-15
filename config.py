@@ -12,6 +12,7 @@ basedir = os.path.join(os.path.dirname(__file__), '.env')
 # else:
 #     prefix = 'sqlite:////'
 
+
 class Config():
     DEBUG = True
     SECRET_KEY = os.environ.get('SECRET_KEY')
