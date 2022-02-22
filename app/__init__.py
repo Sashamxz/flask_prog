@@ -3,6 +3,8 @@ from flask import redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_migrate import Migrate
+from flask_moment import Moment
+from flask_babel import Babel, lazy_gettext as _l
 from flask_admin import Admin
 from flask_admin import AdminIndexView
 from flask_admin.contrib.sqla import ModelView
@@ -22,6 +24,8 @@ db = SQLAlchemy()
 # login_manager = LoginManager()
 # login_manager.login_view = 'login'
 migrate = Migrate()
+moment = Moment()
+babel = Babel()
 
 from app.models import Post, Role, Tag, User 
 
