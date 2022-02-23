@@ -8,6 +8,6 @@ from . import calend
 def show_calendar():
     def create_calendar():    
         aln = calendar.LocaleHTMLCalendar(locale="en_US.UTF-8")
-        show =  aln.formatyear(2021)
+        show =  aln.formatyear(2022)
         return show
     return render_template('calendar/calendar_d.html', create_c = create_calendar)

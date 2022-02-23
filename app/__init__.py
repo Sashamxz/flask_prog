@@ -1,11 +1,12 @@
-from flask import Flask
+from flask import Flask, current_app
 from flask import redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_migrate import Migrate
-from flask_moment import Moment
+# from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l
 from flask_admin import Admin
+from flask_mail import Mail
 from flask_admin import AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from flask_security import SQLAlchemyUserDatastore
@@ -20,12 +21,14 @@ from config import  config
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
-# mail = Mail()
+mail = Mail()
+migrate = Migrate()
+# moment = Moment()
+babel = Babel()
 # login_manager = LoginManager()
 # login_manager.login_view = 'login'
-migrate = Migrate()
-moment = Moment()
-babel = Babel()
+
+
 
 from app.models import Post, Role, Tag, User 
 
@@ -70,28 +73,41 @@ def create_app(config_name=None):
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
     bootstrap.init_app(app)
-    
-    # mail.init_app(app)
+    admin.init_app(app)
+    migrate.init_app(app, db)
+    mail.init_app(app)
     # moment.init_app(app)
-    
+    babel.init_app(app)
+
+
     db.init_app(app)
        
     admin = Admin(app, 'FlaskApp', url='/', index_view=HomeAdminView(name='Home'))
     admin.add_view(PostAdminView(Post, db.session))
     admin.add_view(TagAdminView(Tag, db.session))
-    admin.init_app
-    migrate.init_app(app, db)
+    
     #blueprint
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
+    
     from .calend import calend as calend_blueprint
     app.register_blueprint(calend_blueprint, url_prefix='/calendar')
+    
+    from app.auth import bp as auth_bp
+    app.register_blueprint(auth_bp)
+    
+    from app.api import bp as api_bp
+    app.register_blueprint(api_bp, url_prefix='/api')
+
     #user_create
     security = Security(app, user_datastore)
 
     return app
 
 
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(current_app.config['LANGUAGES'])
 
 
 
