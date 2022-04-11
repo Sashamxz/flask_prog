@@ -28,4 +28,5 @@ manager = Manager(app)
 #     upgrade()
 
 if __name__ == '__main__':
-    app.run()
+    
+    app.run(host='10.0.0.66', port='7777')
