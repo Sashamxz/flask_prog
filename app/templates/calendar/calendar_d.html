@@ -5,16 +5,19 @@
     Calendar
 
 {% endblock %}
-
+   
 {% block content_title %}
-     
-     Date
+  <h4>   
+   Date -   {{  dateq  }}
+</h4>
+
+
         
 {% endblock %}    
 
 {% block content %}
     
-  
+ 
     <div>
         <style>
 
@@ -29,10 +32,11 @@
         
         <hr>
         
-            <table  cellpadding="8"  {{ create_c()|safe }}></table> 
+            <table  cellpadding="8"  {{ calendarq()|safe }}></table> 
         
         <hr>
     </div>      
-         
+          
+    
     
 {% endblock %}

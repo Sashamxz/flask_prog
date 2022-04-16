@@ -13,19 +13,24 @@ from flask_security import login_required
 
 
 
-
-@main.route('/subscribe/', methods=['GET', 'POST'])
+#Обработчик подписки на новости 
+@main.route('/subscribe', methods=['GET', 'POST'])
 def subscribe():
     if request.method == 'POST':    
-        sub_cl =  request.form.get('email')
-        with open ('client.txt', 'a', encoding='utf-8') as f:
-            f.write(f'{sub_cl} \n ' )
+        if len(request.form.get('email')) > 0:
+            sub_cl =  request.form.get('email')
+            with open ('client.txt', 'a', encoding='utf-8') as f:
+                f.write(f'{sub_cl} \n ' )
+                flash('You were successfully subscribe ')
         
-        return render_template('block.html', sub_cl= sub_cl)
+        else:
+            flash(u'Invalid data', 'error')        
+    
+    return render_template('block.html', sub_cl= sub_cl)
 
 
 
-
+#Создание поста
 @main.route('/create', methods=['POST','GET'])
 @login_required
 def create_post():

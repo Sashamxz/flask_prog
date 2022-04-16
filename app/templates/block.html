@@ -1,5 +1,4 @@
 {% extends 'base.html' %}d
-
 {% block content_title %}
     Home
 {% endblock %}
@@ -29,7 +28,10 @@
       text-align: center;
       
     }
-    
+    h4 {  
+            margin-bottom: 10px;
+          
+             }
     p1 {
       font-size: 20px;
       position: relative;
@@ -37,7 +39,15 @@
       left: 30%;
       margin-bottom: 10px;
     }
-
+    .subscribe-form{
+      
+      margin-left:10px;
+      margin-top:10px;
+    }
+    .text-center{
+     margin-left:10px;
+     margin-top:10px;
+    }
   </style>
 
     <div class="conteiner"> 
@@ -50,7 +60,7 @@
           
           <script>
           // Set the date we're counting down to
-          var countDownDate = new Date("Sep 9, 2022 15:37:25").getTime();
+          var countDownDate = new Date("Sep 30, 2022 15:37:25").getTime();
 
           // Update the count down every 1 second
           var x = setInterval(function() {
@@ -85,17 +95,24 @@
       
       <div class="subscribe">
         <style type="text/css">
-          h4 {  
-            margin-bottom: 10px;
           
-             }
         </style>
 
         <h4>Subscribe now to get the latest updates!</h4>
-        <form id="subscribe"  action="/subscribe/" method="POST">
+        <form id="subscribe"  action="/subscribe" method="POST">
           <div class="subscribe-form"  method="POST" >
 
-            <input type="email" name="email" ><input  type="submit" href="{{ url_for('main.subscribe') }}" value="Subscribe">
+            <input type="email" name="email">
+            <input  type="submit" href="{{ url_for('main.subscribe') }}" value="Subscribe">
+              
+            {%for msg in get_flashed_messages()%}
+              
+              <div class="flash">{{ msg }}</div>
+              
+              {% endfor %}
+            
+              
+          
           </div>
           <!-- <div class="mt-2">
             
