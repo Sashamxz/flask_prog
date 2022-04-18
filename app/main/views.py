@@ -1,4 +1,5 @@
 
+from ast import Param
 from calendar import calendar
 from flask import render_template, request, redirect, url_for, flash, make_response, session, current_app
 from flask_login import login_required, login_user,current_user, logout_user
@@ -19,14 +20,16 @@ def subscribe():
     if request.method == 'POST':    
         if len(request.form.get('email')) > 0:
             sub_cl =  request.form.get('email')
+            param = None
             with open ('client.txt', 'a', encoding='utf-8') as f:
                 f.write(f'{sub_cl} \n ' )
                 flash('You were successfully subscribe !')
-        
+                param = True
+                return render_template ('block.html', param = param )
         else:
             flash(u'Something wrong! \
             Confirm your entries', 'error')        
-    
+
     return render_template('block.html')
 
 

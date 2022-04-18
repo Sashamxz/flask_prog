@@ -101,19 +101,19 @@
         <h4>Subscribe now to get the latest updates!</h4>
         <form id="subscribe"  action="/subscribe" method="POST">
           <div class="subscribe-form"  method="POST" >
-            
+            {% if not  param %}
             <input type="email" name="email">
 
             <input  type="submit" href="{{ url_for('main.subscribe') }}" value="Subscribe">
-              
-            <!-- {%for category, msg in get_flashed_messages(with_categories=true)%}
+            {% endif %}  
+            {%for  msg in get_flashed_messages()%}
               
               <div class="flashes">
-                <div class = "alert alert-{{category}}">{{ msg }}</div>
+                <div  style ="background-color:rgba(152, 133, 133, 0.392); color: rgba(77, 75, 8, 0.952)" class = "flash ">{{ msg }}</div>
               </div>
                
-              {% endfor %}-->
-              {% with messages = get_flashed_messages(with_categories=true) %}
+              {% endfor %}
+              <!-- {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
               <ul class=flashes>
               {% for category, message in messages %}
@@ -122,7 +122,7 @@
               </ul>
               {% endif %}
               {% endwith %}
-              
+               -->
           
           </div>
           <!-- <div class="mt-2">
