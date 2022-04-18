@@ -32,3 +32,18 @@ div#tekst_sverhu_kartinki {
     padding: 8px;
     
 }
+
+/* .flash {
+    width: 360px;
+    position: relative;
+    margin: 0 auto 20px auto;
+    padding: 25px 15px;
+    text-align: left;
+    border-radius: 5px;
+    box-shadow:
+    0 1px 1px rgba(0,0,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+    opacity: 0;
+    cursor: default;
+    display: none;
+   } */

@@ -21,12 +21,13 @@ def subscribe():
             sub_cl =  request.form.get('email')
             with open ('client.txt', 'a', encoding='utf-8') as f:
                 f.write(f'{sub_cl} \n ' )
-                flash('You were successfully subscribe ')
+                flash('You were successfully subscribe !')
         
         else:
-            flash(u'Invalid data', 'error')        
+            flash(u'Something wrong! \
+            Confirm your entries', 'error')        
     
-    return render_template('block.html', sub_cl= sub_cl)
+    return render_template('block.html')
 
 
 
