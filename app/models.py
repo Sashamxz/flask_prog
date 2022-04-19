@@ -91,7 +91,10 @@ class Role(db.Model, RoleMixin):
     description = db.Column(db.String(255))
     
 
-
+class Subscribe(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    email = db.Column(db.String(64), unique=True)
+    time = db.Column(db.DateTime, default=datetime.now)
 
 
 

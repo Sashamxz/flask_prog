@@ -43,10 +43,12 @@
       
       margin-left:10px;
       margin-top:10px;
+      margin-bottom: 10px;
     }
     .text-center{
      margin-left:10px;
      margin-top:10px;
+
     }
   </style>
 
@@ -101,18 +103,20 @@
         <h4>Subscribe now to get the latest updates!</h4>
         <form id="subscribe"  action="/subscribe" method="POST">
           <div class="subscribe-form"  method="POST" >
+            
             {% if not  param %}
             <input type="email" name="email">
 
             <input  type="submit" href="{{ url_for('main.subscribe') }}" value="Subscribe">
             {% endif %}  
+
             {%for  msg in get_flashed_messages()%}
               
               <div class="flashes">
-                <div  style ="background-color:rgba(152, 133, 133, 0.392); color: rgba(77, 75, 8, 0.952)" class = "flash ">{{ msg }}</div>
+                <samp display= "inline-block"  style ="background-color:rgba(98, 89, 89, 0.77); color: rgba(246, 239, 23, 0.952)" >{{ msg }}</samp>
               </div>
                
-              {% endfor %}
+            {% endfor %}
               <!-- {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
               <ul class=flashes>

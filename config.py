@@ -26,7 +26,6 @@ class Config():
 class DevelopmentConfig(Config):
     DEBUG = True
     WTF_CSRF_ENABLED = False
-    SQLALCHEMY_DATABASE_URI = os.getenv('DEV_DATABASE_URL')
     SECURITY_PASSWORD_SALT = os.getenv('SALT')
     SECURITY_PASSWORD_HASH = 'bcrypt'
     SQLALCHEMY_DATABASE_URI = os.getenv('DEV_DATABASE_URL') or \
