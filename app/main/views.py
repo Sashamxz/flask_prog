@@ -1,4 +1,3 @@
-
 from calendar import calendar
 from flask import render_template, request, redirect, url_for, flash, make_response, session, current_app
 from flask_login import login_required, login_user, current_user, logout_user
@@ -16,27 +15,27 @@ def subscribe():
         if len(request.form.get('email')) > 3:
             sub_cl = request.form.get('email')
             param = None
-           
+
             # запись тех, кто подписался в файл
             # with open ('client.txt', 'a', encoding='utf-8') as f:
             #     f.write(f'{sub_cl} \n ' )
             #     flash('You were successfully subscribe !')
-           
-            if  Subscribe.query.filter(Subscribe.email == f'{sub_cl}').all():
+
+            #проверка на наличие подписки    
+            if Subscribe.query.filter(Subscribe.email == f'{sub_cl}').all():
                 flash(" You are already subscribed ")
                 param = True
                 return render_template('block.html', param=param)
 
             try:
                 subscribe_m = Subscribe(email=sub_cl)
-                db.session.add(subscribe_m)
+                db.session.add(subscribe_m) #Запись в базу данних 
                 db.session.commit()
                 param = True
                 flash('You were successfully subscribe !')
                 return render_template('block.html', param=param)
-                
 
-            except:
+            except BaseException:
                 print('db error')
         else:
             flash(u'Something wrong! \
@@ -57,7 +56,7 @@ def create_post():
             post = Post(title=title, body=body)
             db.session.add(post)
             db.session.commit()
-        except:
+        except BaseException:
             print('error db.add 498e238e')
 
         return redirect(url_for('main.index'))
@@ -66,6 +65,7 @@ def create_post():
     return render_template('create_post.html', form=form)
 
 
+# Редактирование поста
 @main.route('/<slug>/edit/', methods=['POST', 'GET'])
 @login_required
 def edit_post(slug):
@@ -81,6 +81,7 @@ def edit_post(slug):
     return render_template('edit_post.html', post=post, form=form)
 
 
+# страница блога
 @main.route('/blog', methods=['GET', 'POST'])
 def index():
     q = request.args.get('q')
@@ -102,19 +103,20 @@ def index():
 
     return render_template('index.html', posts=posts, pages=pages)
 
-
+# главная страница
 @main.route('/')
 def home_view():
-    home = "everyone"
-    return render_template('block.html', home=home)
+    return render_template('block.html')
 
 
+# Посто по слагу
 @main.route('/<slug>/')
 def post_detail(slug):
     post = Post.query.filter(Post.slug == slug).first()
     return render_template('post_d.html', post=post)
 
 
+# Старница авторизации пользователей
 @main.route('/loging/', methods=['GET', 'POST'])
 def loging():
     return render_template('loging.html')
@@ -130,6 +132,7 @@ def user_profile(id):
     return "Profile page of user #{}".format(id)
 
 
+# страница не найдена 404
 @main.app_errorhandler(404)
 def page_not_found(e):
     return render_template('page_404.html'), 404

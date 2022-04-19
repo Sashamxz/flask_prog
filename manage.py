@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+import sys
+from flask_script import Manager
+from flask_migrate import Migrate
+from app import create_app, db
 import os
 from dotenv import load_dotenv
 
@@ -9,16 +13,9 @@ if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
 
-import sys 
-from app import create_app, db
-from flask_migrate import Migrate
-from flask_script import Manager
-
-
 app = create_app('development')
 migrate = Migrate(app, db)
 manager = Manager(app)
-
 
 
 # @app.cli.command()
@@ -27,6 +24,7 @@ manager = Manager(app)
 #     # migrate database to latest revision
 #     upgrade()
 
+
 if __name__ == '__main__':
-    
+
     app.run(host='10.0.0.66', port='7777')
