@@ -1,4 +1,3 @@
-from app.models import Post, Role, Tag, User
 from flask import Flask, current_app
 from flask import redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
@@ -24,6 +23,8 @@ migrate = Migrate()
 # login_manager = LoginManager()
 # login_manager.login_view = 'login'
 
+
+from app.models import Post, Role, Tag, User
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
