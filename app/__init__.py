@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_migrate import Migrate
 # from flask_moment import Moment
+from flask_login import LoginManager
 from flask_admin import Admin
 from flask_mail import Mail
 from flask_admin import AdminIndexView
@@ -18,10 +19,11 @@ bootstrap = Bootstrap()
 db = SQLAlchemy()
 mail = Mail()
 migrate = Migrate()
+login_manager = LoginManager()
+login_manager.login_view = 'login'
 
 # moment = Moment()
-# login_manager = LoginManager()
-# login_manager.login_view = 'login'
+
 
 
 from app.models import Post, Role, Tag, User
@@ -65,7 +67,7 @@ class TagAdminView(AdminMixin, BaseModelView):
     form_columns = ['name']
 
 
-def create_app(config_name=None):
+def create_app(config_name):
     app = Flask(__name__)
 
     app.config.from_object(config[config_name])
@@ -77,12 +79,7 @@ def create_app(config_name=None):
 
     db.init_app(app)
 
-    admin = Admin(
-        app,
-        'FlaskApp',
-        url='/',
-        index_view=HomeAdminView(
-            name='Home'))
+    admin = Admin(app, 'FlaskApp', url='/', index_view=HomeAdminView(name='Home'))
     admin.add_view(PostAdminView(Post, db.session))
     admin.add_view(TagAdminView(Tag, db.session))
 

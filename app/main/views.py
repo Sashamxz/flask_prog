@@ -4,8 +4,9 @@ from flask_login import login_required, login_user, current_user, logout_user
 from . import main
 from .. import db
 from .forms import PostForm
-from ..models import Post, Subscribe
+from ..models import Post, Subscribe , User
 from flask_security import login_required
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 # Обработчик подписки на новости
@@ -125,6 +126,35 @@ def loging():
 @main.route('/help')
 def helper():
     return 'this is help page'
+
+
+
+@main.route('/register', methods=['GET', 'POST'])
+def register():
+    pass
+
+
+@main.route('/login', methods=['GET', 'POST'])
+def login_page():
+    login = request.form.get('login')
+    password = request.form.get('password')
+
+    if login and password:
+        user = User.query.filter_by(login=login).first()
+
+        if user and check_password_hash(user.password, password):
+            login_user(user)
+
+            next_page = request.args.get('next')
+
+            return redirect(next_page)
+        else:
+            flash('Login or password is not correct')
+    else:
+        flash('Please fill login and password fields')
+
+    return render_template('login.html')
+
 
 
 @main.route('/user/<int:id>/')

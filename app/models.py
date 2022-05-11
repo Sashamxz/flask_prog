@@ -2,14 +2,16 @@ from flask import current_app, request, url_for
 from enum import unique
 from datetime import datetime
 import re
-from . import db
+from . import db, login_manager
 from flask_security import UserMixin, RoleMixin
+
 
 
 post_tags = db.Table(
     'post_tags', db.Column(
         'post_id', db.Integer, db.ForeignKey('post.id')), db.Column(
             'tag_id', db.Integer, db.ForeignKey('tag.id')))
+
 
 
 class Permission:
@@ -20,9 +22,11 @@ class Permission:
     ADMIN = 16
 
 
+
 def slugify(stringg):
     pattern = r'[^\w+]'
     return re.sub(pattern, '-', stringg)
+
 
 
 class Post(db.Model):
@@ -52,6 +56,7 @@ class Post(db.Model):
         return '<Post id: {}, title: {}>'.format(self.id, self.title)
 
 
+
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
@@ -63,6 +68,7 @@ class Tag(db.Model):
 
     def __repr__(self):
         return '{}'.format(self.name)
+
 
 
 roles_users = db.Table(
@@ -77,11 +83,12 @@ roles_users = db.Table(
         db.ForeignKey('role.id')))
 
 
+
 class User(db.Model, UserMixin):
     # __tablename__ = 'user'
     id = db.Column(db.Integer(), primary_key=True)
-    email = db.Column(db.String(64), unique=True)
-    password = db.Column(db.String(64), unique=True)
+    email = db.Column(db.String(64), nullable=False, unique=True)
+    password = db.Column(db.String(64), nullable=False)
     active = db.Column(db.Boolean(), default=False, index=True)
     roles = db.relationship(
         'Role',
@@ -91,6 +98,7 @@ class User(db.Model, UserMixin):
             lazy='dynamic'))
 
 
+
 class Role(db.Model, RoleMixin):
     # __tablename__ = 'roles'
     id = db.Column(db.Integer(), primary_key=True)
@@ -98,10 +106,22 @@ class Role(db.Model, RoleMixin):
     description = db.Column(db.String(255))
 
 
+
 class Subscribe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True)
     time = db.Column(db.DateTime, default=datetime.now)
+
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+
+
+
 
 
 # class Message(db.Model):
