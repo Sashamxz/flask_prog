@@ -11,6 +11,7 @@ Flask==1.1.2
 Flask-Admin==1.5.8
 Flask-Babel==2.0.0
 Flask-BabelEx==0.9.4
+Flask-Bootstrap==3.3.7.1
 Flask-Email==1.4.4
 Flask-HTTPAuth==4.5.0
 Flask-Login==0.5.0
