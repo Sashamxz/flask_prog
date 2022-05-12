@@ -4,7 +4,7 @@ from datetime import datetime
 import re
 from . import db, login_manager
 from flask_security import UserMixin, RoleMixin
-
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 post_tags = db.Table(
@@ -88,7 +88,9 @@ class User(db.Model, UserMixin):
     # __tablename__ = 'user'
     id = db.Column(db.Integer(), primary_key=True)
     email = db.Column(db.String(64), nullable=False, unique=True)
+    username = db.Column(db.String(64), index=True, unique=True)
     password = db.Column(db.String(64), nullable=False)
+    
     active = db.Column(db.Boolean(), default=False, index=True)
     roles = db.relationship(
         'Role',
@@ -96,6 +98,18 @@ class User(db.Model, UserMixin):
         backref=db.backref(
             'users',
             lazy='dynamic'))
+
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
 
 
 

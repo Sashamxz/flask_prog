@@ -90,8 +90,8 @@ def create_app(config_name):
     from .calend import calend as calend_blueprint
     app.register_blueprint(calend_blueprint, url_prefix='/calendar')
 
-    # from app.auth import bp as auth_bp
-    # app.register_blueprint(auth_bp)
+    from .auth import bp as auth_bp
+    app.register_blueprint(auth_bp)
 
     # from app.api import bp as api_bp
     # app.register_blueprint(api_bp, url_prefix='/api')
