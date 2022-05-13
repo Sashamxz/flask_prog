@@ -7,8 +7,11 @@ from . import main
 from .. import db
 from .forms import PostForm
 from ..models import Post, Subscribe , User
-from flask_security import login_required
 from werkzeug.security import check_password_hash, generate_password_hash
+
+
+
+
 
 
 # Обработчик подписки на новости
@@ -66,6 +69,7 @@ def create_post():
 
     form = PostForm()
     return render_template('create_post.html', form=form)
+
 
 
 # Редактирование поста

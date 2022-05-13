@@ -1,70 +1,33 @@
-from flask import Flask, current_app
+import logging
+from flask import Flask, request, current_app
 from flask import redirect, url_for, request
+from elasticsearch import Elasticsearch
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_migrate import Migrate
-# from flask_moment import Moment
 from flask_login import LoginManager
-from flask_admin import Admin
 from flask_mail import Mail
-from flask_admin import AdminIndexView
-from flask_admin.contrib.sqla import ModelView
-from flask_security import SQLAlchemyUserDatastore
-from flask_security import Security
-from flask_security import current_user
 from config import config
+
+
 
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
 mail = Mail()
 migrate = Migrate()
-login_manager = LoginManager()
-login_manager.login_view = 'login'
-
-# moment = Moment()
-
+login = LoginManager()
+login.login_view = 'auth.login'
+login.login_message = ('Please log in to access this page.')
 
 
-from app.models import Post, Role, Tag, User
-
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
 
-class AdminMixin:
-    def is_accessible(self):
-        return current_user.has_role('admin')
-
-    def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('security.login', next=request.url))
 
 
-class BaseModelView(ModelView):
-    def on_model_change(self, form, model, is_created):
-
-        model.generate_slug()
-        return super(
-            BaseModelView,
-            self).on_model_change(
-            form,
-            model,
-            is_created)
 
 
-class AdminView(AdminMixin, ModelView):
-    pass
 
-
-class HomeAdminView(AdminMixin, AdminIndexView):
-    pass
-
-
-class PostAdminView(AdminMixin, BaseModelView):
-    form_columns = ['title', 'body', 'tags']
-
-
-class TagAdminView(AdminMixin, BaseModelView):
-    form_columns = ['name']
 
 
 def create_app(config_name):
@@ -73,15 +36,14 @@ def create_app(config_name):
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
     bootstrap.init_app(app)
+    login.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
-    # moment.init_app(app)
 
     db.init_app(app)
 
-    admin = Admin(app, 'FlaskApp', url='/', index_view=HomeAdminView(name='Home'))
-    admin.add_view(PostAdminView(Post, db.session))
-    admin.add_view(TagAdminView(Tag, db.session))
+    app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
+        if app.config['ELASTICSEARCH_URL'] else None
 
     # blueprint
     from .main import main as main_blueprint
@@ -91,19 +53,19 @@ def create_app(config_name):
     app.register_blueprint(calend_blueprint, url_prefix='/calendar')
 
     from .auth import bp as auth_bp
-    app.register_blueprint(auth_bp)
+    app.register_blueprint(auth_bp, url_prefix='/auth')
 
     # from app.api import bp as api_bp
     # app.register_blueprint(api_bp, url_prefix='/api')
 
     # user_create
-    security = Security(app, user_datastore)
-    @app.before_first_request
-    def create_tables():
-        db.create_all()
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('Microblog startup')
+    
+   
+    
 
     return app
 
 
-# admin.add_view(ModelView(User, db.session))
-# admin.add_view(ModelView(Post, db.session))
+from app import models

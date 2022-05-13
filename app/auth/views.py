@@ -7,44 +7,22 @@ from .forms import LoginForm, RegistrationForm
 from werkzeug.urls import url_parse
 
 
-@bp.before_app_request
-def before_request():
-    if current_user.is_authenticated:
-        current_user.ping()
-        if not current_user.confirmed \
-                and request.endpoint \
-                and request.blueprint != 'auth' \
-                and request.endpoint != 'static':
-            return redirect(url_for('auth.unconfirmed'))
-
-
-
-
-# @bp.route('/unconfirmed')
-# def unconfirmed():
-#     if current_user.is_anonymous or current_user.confirmed:
-#         return redirect(url_for('main.index'))
-#     return render_template('auth/unconfirmed.html')
-
-
 
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
-            return redirect(url_for('auth.login'))
-        login_user(user, remember=form.remember_me.data)
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('main.index')
-        return redirect(next_page)
-    return render_template('auth/login.html', title=('Sign In'), form=form)
+        user = User.query.filter_by(email=form.email.data.lower()).first()
+        if user is not None and user.verify_password(form.password.data):
+            # login_user(user, form.remember_me.data)
+            next = request.args.get('next')
+            if next is None or not next.startswith('/'):
+                next = url_for('main.index')
+            
+            return redirect(next)
+        flash('Invalid email or password.')
+    return render_template('auth/login.html', form=form)
 
 
 

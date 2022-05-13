@@ -17,7 +17,7 @@ class Config():
     DEBUG = True
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
+    ELASTICSEARCH_URL = os.getenv('ELASTICSEARCH_URL')
     @staticmethod
     def init_app(app):
         pass
@@ -30,7 +30,7 @@ class DevelopmentConfig(Config):
     SECURITY_PASSWORD_HASH = 'bcrypt'
     SQLALCHEMY_DATABASE_URI = os.getenv('DEV_DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
-
+    
 
 class TestingConfig(Config):
     pass
