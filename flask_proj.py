@@ -13,7 +13,7 @@ if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
 
-app = create_app('development')
+app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 migrate = Migrate(app, db)
 manager = Manager(app)
 

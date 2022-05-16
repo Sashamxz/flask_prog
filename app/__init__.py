@@ -60,7 +60,7 @@ def create_app(config_name):
 
     # user_create
     app.logger.setLevel(logging.INFO)
-    app.logger.info('Microblog startup')
+    app.logger.info('Flask_proj startup')
     
    
     

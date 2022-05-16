@@ -5,8 +5,8 @@ from app.auth.forms import LoginForm, RegistrationForm
 from flask_login import login_required, login_user, current_user, logout_user
 from . import main
 from .. import db
-from .forms import PostForm
-from ..models import Post, Subscribe , User
+from .forms import PostForm ,CommentForm
+from ..models import Post, Subscribe , User , Comment
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -101,14 +101,44 @@ def index():
         page = 1
 
     if q:
-        posts = Post.query.filter(Post.title.contains(
+        posts_ = Post.query.filter(Post.title.contains(
             q) | Post.body.contains(q)).all()
     else:
-        posts = Post.query.order_by(Post.created.desc())
+        posts_ = Post.query.order_by(Post.created.desc())
 
-    pages = posts.paginate(page=page, per_page=5)
+    pages = posts_.paginate(page=page, per_page=5)
 
-    return render_template('index.html', posts=posts, pages=pages)
+    return render_template('index.html', posts=posts_, pages=pages)
+
+
+@main.route('/post/<int:id>', methods=['GET', 'POST'])
+def post(id):
+    post = Post.query.get_or_404(id)
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = Comment(body=form.body.data,
+                          post=post,
+                          author=current_user._get_current_object())
+        db.session.add(comment)
+        db.session.commit()
+        flash('Your comment has been published.')
+        return redirect(url_for('.post', id=post.id, page=-1))
+    page = request.args.get('page', 1, type=int)
+    if page == -1:
+        page = (post.comments.count() - 1) // \
+            current_app.config['FLASKY_COMMENTS_PER_PAGE'] + 1
+    pagination = post.comments.order_by(Comment.timestamp.asc()).paginate(
+        page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
+        error_out=False)
+    comments = pagination.items
+    return render_template('post.html', posts=[post], form=form,
+                           comments=comments, pagination=pagination)
+
+
+
+
+
+
 
 # главная страница
 @main.route('/')
@@ -122,8 +152,6 @@ def post_detail(slug):
     post = Post.query.filter(Post.slug == slug).first()
     return render_template('post_d.html', post=post)
 
-
-# Старница авторизации пользователей
 
 
 

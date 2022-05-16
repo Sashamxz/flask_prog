@@ -18,6 +18,7 @@ class Config():
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ELASTICSEARCH_URL = os.getenv('ELASTICSEARCH_URL')
+    FLASK_ADMIN = os.getenv('FLASK_ADMIN')
     @staticmethod
     def init_app(app):
         pass
