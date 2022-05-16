@@ -1,7 +1,20 @@
 {% extends 'base.html' %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
+
+
+
 {% block content %}
+
+{%for  msg in get_flashed_messages()%}
+              
+    <div class="flashes">
+      <samp display= "inline-block"  style ="background-color:rgba(236, 236, 236, 0.77); color: rgba(29, 29, 27, 0.952)" >{{ msg }}</samp>
+    </div>
+     
+  {% endfor %}
+
+
     <h1>{{ ('Sign In') }}</h1>
     <div class="row">
         <div class="col-md-4">

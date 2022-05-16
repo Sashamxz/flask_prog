@@ -35,7 +35,15 @@
       </li>
     </ul>
     
-    <form class="navbar-form navbar-left" method="GET">
+    <form class="navbar-form navbar-center" method="GET">
+      <style>
+          .navbar-center  {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+          
+      </style>
       <div class="form-control me-2">
         <input  type="text" placeholder="Search" aria-label="Search" name="q" value="{{ request.args.get('q', '') }}">
         <button class="btn btn-outline-success" type="submit">Search</button>

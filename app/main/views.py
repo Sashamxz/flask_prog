@@ -101,14 +101,13 @@ def index():
         page = 1
 
     if q:
-        posts_ = Post.query.filter(Post.title.contains(
-            q) | Post.body.contains(q)).all()
+        posts = Post.query.filter(Post.title.contains(q) | Post.body.contains(q))
     else:
-        posts_ = Post.query.order_by(Post.created.desc())
+        posts = Post.query.order_by(Post.created.desc())
 
-    pages = posts_.paginate(page=page, per_page=5)
+    pages = posts.paginate(page=page, per_page=5)
 
-    return render_template('index.html', posts=posts_, pages=pages)
+    return render_template('index.html', posts=posts, pages=pages)
 
 
 @main.route('/post/<int:id>', methods=['GET', 'POST'])
