@@ -35,6 +35,9 @@
       </li>
     </ul>
     
+
+
+    {% if request.path == '/blog' %}
     <form class="navbar-form navbar-center" method="GET">
       <style>
           .navbar-center  {
@@ -49,7 +52,7 @@
         <button class="btn btn-outline-success" type="submit">Search</button>
       </div>  
     </form>
-  
+  {% endif %}
   </div>
 
 </nav>
