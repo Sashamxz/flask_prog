@@ -14,6 +14,44 @@
 
 {% block content %}
    
-    {{ post.body }}
+{{ post.body }}
+
+    {% for comment in post.comments %}
+    <br />
+    <div class="collapse" id="comments-{{post.id}}">
+      <div class="card">
+        <div class="card-body" id="comments-expanded-{{post.id}}">
+          {% for comment in post.comments %}
+          <div class="d-flex justify-content-between align-items-center">
+            <li> {{comment.text}} {{comment.id}}</li>
+              </div>
+          </div>
+              
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="/delete-comment/{{comment.id}}" class="dropdown-item" >Delete</a>
+                  </li>
+                </ul>
+              </div>
+              
+            </div>
+          </div>
+        {% endfor %}
+    {% endfor %}
+
+
+
+
+    <br />
+    <form class="input-group mb-3" method="POST" action="/create-comment/{{post.slug}}">
+        <input
+          type="text"
+          id="text"
+          name="text"
+          class="form-control"
+          placeholder="Comment something!"
+        />
+       <button type="submit"class="btn btn-primary">Comment</button>
+    </form>
 
 {% endblock %}

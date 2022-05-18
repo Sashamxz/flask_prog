@@ -33,7 +33,25 @@
       <li class="nav-item">
         <a class="nav-link active" aria-current="page" href="{{ url_for('calend.show_calendar') }}">Calendar</a>
       </li>
-    </ul>
+      </ul>
+      {% if current_user.is_anonymous %}
+      <ul class="navbar-nav ml-auto">
+      
+      
+      <li class="nav-item"> 
+      <a class="nav-link active"  href="{{ url_for('auth.login') }}">{{ ('Login') }}</a>
+       </li>
+       {% endif %}
+       {% if current_user.is_authenticated %}
+      <li class="nav-item">
+      <a class="nav-link active"  href="{{ url_for('auth.logout') }}">{{ ('Logout') }}</a>
+      </li>
+      
+      </ul>
+      {% endif %}
+     
+
+    
     
 
 

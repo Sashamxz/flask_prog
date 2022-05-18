@@ -1,4 +1,4 @@
-from calendar import calendar
+from distutils.log import error
 from flask import render_template, request, redirect, url_for, flash, make_response, session, current_app
 from werkzeug.urls import url_parse
 from app.auth.forms import LoginForm, RegistrationForm
@@ -6,7 +6,7 @@ from flask_login import login_required, login_user, current_user, logout_user
 from . import main
 from .. import db
 from .forms import PostForm ,CommentForm
-from ..models import Post, Subscribe , User , Comment
+from ..models import Post, Subscribe , User , Comment , Permission
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -54,38 +54,45 @@ def subscribe():
 @main.route('/create', methods=['POST', 'GET'])
 @login_required
 def create_post():
-    if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
+    if current_user.can(Permission.WRITE):    
+        if request.method == 'POST':
+            title = request.form['title']
+            body = request.form['body']
 
-        try:
-            post = Post(title=title, body=body)
-            db.session.add(post)
-            db.session.commit()
-        except BaseException:
-            print('error db.add 498e238e')
+            try:
+                post = Post(title=title, body=body)
+                db.session.add(post)
+                db.session.commit()
+            except BaseException:
+                print('error db.add 498e238e')
 
-        return redirect(url_for('main.index'))
+            return redirect(url_for('main.index'))
 
-    form = PostForm()
-    return render_template('create_post.html', form=form)
-
+        form = PostForm()
+        return render_template('create_post.html', form=form)
+    flash('Доступ ограничен')
+    return redirect(url_for('main.index'))
 
 
 # Редактирование поста
 @main.route('/<slug>/edit/', methods=['POST', 'GET'])
 @login_required
 def edit_post(slug):
-    post = Post.query.filter(Post.slug == slug).first()
+    if current_user.can(Permission.MODERATE):
+        post = Post.query.filter(Post.slug == slug).first()
 
-    if request.method == 'POST':
-        form = PostForm(formdata=request.form, obj=post)
-        form.populate_obj(post)
-        db.session.commit()
-        return redirect(url_for('main.post_detail', slug=post.slug))
+        if request.method == 'POST':
+            form = PostForm(formdata=request.form, obj=post)
+            form.populate_obj(post)
+            db.session.commit()
+            return redirect(url_for('main.post_detail', slug=post.slug))
 
-    form = PostForm(obj=post)
-    return render_template('edit_post.html', post=post, form=form)
+        form = PostForm(obj=post)
+        return render_template('edit_post.html', post=post, form=form)
+    flash('Доступ ограничен')
+    return redirect(url_for('main.index')) 
+
+
 
 
 # страница блога
@@ -110,38 +117,50 @@ def index():
     return render_template('index.html', posts=posts, pages=pages)
 
 
-@main.route('/post/<int:id>', methods=['GET', 'POST'])
-def post(id):
-    post = Post.query.get_or_404(id)
-    form = CommentForm()
-    if form.validate_on_submit():
-        comment = Comment(body=form.body.data,
-                          post=post,
-                          author=current_user._get_current_object())
-        db.session.add(comment)
+@main.route('/create-comment/<slug>', methods=['POST'])
+@login_required
+def create_comment(slug):
+    post_id = Post.query.filter(Post.slug == slug).first().id
+    text = request.form.get('text')
+
+    if not text:
+        flash('Comment cannot be empty.', category='error')
+    else:
+        post = Post.query.filter_by(id=post_id)
+        if post:
+            comment = Comment(body=text, author=current_user, post_id=post_id)
+            db.session.add(comment)
+            db.session.commit()
+        else:
+            flash('Post does not exist.', category='error')
+
+    return redirect(url_for('main.index'))
+
+
+
+
+
+
+@main.route("/delete-comment/<comment_id>")
+@login_required
+def delete_comment(comment_id):
+    comment = Comment.query.filter_by(id=comment_id).first()
+
+    if not comment:
+        flash('Comment does not exist.', category='error')
+    elif current_user.id != comment.author and current_user.id != comment.post.author:
+        flash('You do not have permission to delete this comment.', category='error')
+    else:
+        db.session.delete(comment)
         db.session.commit()
-        flash('Your comment has been published.')
-        return redirect(url_for('.post', id=post.id, page=-1))
-    page = request.args.get('page', 1, type=int)
-    if page == -1:
-        page = (post.comments.count() - 1) // \
-            current_app.config['FLASKY_COMMENTS_PER_PAGE'] + 1
-    pagination = post.comments.order_by(Comment.timestamp.asc()).paginate(
-        page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
-        error_out=False)
-    comments = pagination.items
-    return render_template('post.html', posts=[post], form=form,
-                           comments=comments, pagination=pagination)
 
-
-
-
-
-
+    return redirect(url_for('main.index'))    
 
 # главная страница
-@main.route('/')
+@main.route('/', methods=['GET', 'POST'])
+@main.route('/home', methods=['GET', 'POST'])
 def home_view():
+    
     return render_template('block.html')
 
 
@@ -166,8 +185,3 @@ def helper():
 def user_profile(id):
     return "Profile page of user #{}".format(id)
 
-
-# страница не найдена 404
-@main.app_errorhandler(404)
-def page_not_found(e):
-    return render_template('page_404.html'), 404

@@ -8,11 +8,19 @@
   
 {% block content_title %}
     Posts
+
+    {%for  msg in get_flashed_messages()%}
+                    
+    <div class="flashes">
+       <samp display= "block"  style ="background-color:rgba(236, 236, 236, 0.77); color: rgba(83, 88, 84, 0.952) ; text-align: center " >{{ msg }}</samp>
+    </div>
+    
+    {% endfor %}
 {% endblock %}
 
 {% block content %}
     
-
+  
 
 
 
