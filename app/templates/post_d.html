@@ -12,35 +12,45 @@
         
 {% endblock %}    
 
+
 {% block content %}
+
    
 {{ post.body }}
 
     {% for comment in post.comments %}
-    <br />
-    <div class="collapse" id="comments-{{post.id}}">
-      <div class="card">
-        <div class="card-body" id="comments-expanded-{{post.id}}">
-          {% for comment in post.comments %}
-          <div class="d-flex justify-content-between align-items-center">
-            <li> {{comment.text}} {{comment.id}}</li>
-              </div>
-          </div>
+    
+    <br\>
+    <li class="comment">
+      <div class="comment-content">
+        <div class="comment-author">{{ comment.author.username }}</div><div class="comment-date">{{ comment.timestamp }}</div>
+        
+        <div class="comment-body">{{comment.body}}</div>
+     
+      </div>
+      </li>
               
-                <ul class="dropdown-menu">
-                  <li>
-                    <a href="/delete-comment/{{comment.id}}" class="dropdown-item" >Delete</a>
-                  </li>
-                </ul>
-              </div>
-              
-            </div>
-          </div>
-        {% endfor %}
+        
+        
+    
+    
+    
+    
+    <div class="btn-group">
+      <button
+        type="button"
+        class="btn btn-sm btn-primary dropdown-toggle"
+        data-bs-toggle="dropdown"></button>
+      <ul class="dropdown-menu">
+        <li>
+          <a href="{{ url_for('main.delete_comment', slug=slug) }}"
+            class="dropdown-item">Delete</a>
+        </li>
+      </ul>
+    </div>
+   
+
     {% endfor %}
-
-
-
 
     <br />
     <form class="input-group mb-3" method="POST" action="/create-comment/{{post.slug}}">

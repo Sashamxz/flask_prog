@@ -117,9 +117,10 @@ def index():
     return render_template('index.html', posts=posts, pages=pages)
 
 
-@main.route('/create-comment/<slug>', methods=['POST'])
+@main.route('/create-comment/<slug>', methods=['GET', 'POST'])
 @login_required
 def create_comment(slug):
+    
     post_id = Post.query.filter(Post.slug == slug).first().id
     text = request.form.get('text')
 
@@ -128,24 +129,26 @@ def create_comment(slug):
     else:
         post = Post.query.filter_by(id=post_id)
         if post:
-            comment = Comment(body=text, author=current_user, post_id=post_id)
+            comment = Comment(body=text, author=current_user._get_current_object(), post_id=post_id)
             db.session.add(comment)
             db.session.commit()
         else:
             flash('Post does not exist.', category='error')
 
-    return redirect(url_for('main.index'))
+    return redirect(url_for('main.post_detail', slug=slug)) 
 
 
 
 
 
 
-@main.route("/delete-comment/<comment_id>")
+
+@main.route("/delete-comment/<slug>")
 @login_required
-def delete_comment(comment_id):
-    comment = Comment.query.filter_by(id=comment_id).first()
-
+def delete_comment(slug):
+    
+    comment = Comment.query.filter(Comment.author==current_user).all()
+    
     if not comment:
         flash('Comment does not exist.', category='error')
     elif current_user.id != comment.author and current_user.id != comment.post.author:
@@ -154,7 +157,7 @@ def delete_comment(comment_id):
         db.session.delete(comment)
         db.session.commit()
 
-    return redirect(url_for('main.index'))    
+    return redirect(url_for('main.post_detail', slug=slug))     
 
 # главная страница
 @main.route('/', methods=['GET', 'POST'])
@@ -168,9 +171,8 @@ def home_view():
 @main.route('/<slug>/')
 def post_detail(slug):
     post = Post.query.filter(Post.slug == slug).first()
+    
     return render_template('post_d.html', post=post)
-
-
 
 
 @main.route('/help')

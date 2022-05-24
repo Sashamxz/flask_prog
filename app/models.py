@@ -87,7 +87,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     active = db.Column(db.Boolean(), default=False, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    comments = db.relationship('Comment', backref='author', passive_deletes=True)
     likes = db.relationship('Like', backref='user', passive_deletes=True)
 
 
@@ -115,7 +115,10 @@ class User(UserMixin, db.Model):
 
     def is_administrator(self):
         return self.can(Permission.ADMIN)
-
+   
+   
+    def __repr__(self):
+        return '<User: {}>'.format(self.name)
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -178,7 +181,7 @@ class Comment(db.Model):
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     disabled = db.Column(db.Boolean)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id',ondelete="CASCADE"), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
 
