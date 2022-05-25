@@ -14,7 +14,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 
 
-# Обработчик подписки на новости
+# Обробник підписки на новини 
 @main.route('/subscribe', methods=['GET', 'POST'])
 def subscribe():
     if request.method == 'POST':
@@ -22,20 +22,21 @@ def subscribe():
             sub_cl = request.form.get('email')
             param = None
 
-            # запись тех, кто подписался в файл
+            # запис тих, хто підписався в файл
             # with open ('client.txt', 'a', encoding='utf-8') as f:
             #     f.write(f'{sub_cl} \n ' )
             #     flash('You were successfully subscribe !')
 
-            #проверка на наличие подписки    
+            #перевірка наявності підписки     
             if Subscribe.query.filter(Subscribe.email == f'{sub_cl}').all():
                 flash(" You are already subscribed ")
                 param = True
                 return render_template('block.html', param=param)
 
             try:
+                #Запис в базу данних  
                 subscribe_m = Subscribe(email=sub_cl)
-                db.session.add(subscribe_m) #Запись в базу данних 
+                db.session.add(subscribe_m) 
                 db.session.commit()
                 param = True
                 flash('You were successfully subscribe !')
@@ -50,7 +51,7 @@ def subscribe():
     return render_template('block.html')
 
 
-# Создание поста
+# Створення поста
 @main.route('/create', methods=['POST', 'GET'])
 @login_required
 def create_post():
@@ -58,9 +59,9 @@ def create_post():
         if request.method == 'POST':
             title = request.form['title']
             body = request.form['body']
-
+            user_id = current_user.id
             try:
-                post = Post(title=title, body=body)
+                post = Post(title=title, body=body, author_id=user_id)
                 db.session.add(post)
                 db.session.commit()
             except BaseException:
@@ -74,10 +75,11 @@ def create_post():
     return redirect(url_for('main.index'))
 
 
-# Редактирование поста
+# Редагування поста 
 @main.route('/<slug>/edit/', methods=['POST', 'GET'])
 @login_required
 def edit_post(slug):
+    #перевірка доступу для редагування
     if current_user.can(Permission.MODERATE):
         post = Post.query.filter(Post.slug == slug).first()
 
@@ -95,9 +97,10 @@ def edit_post(slug):
 
 
 
-# страница блога
+# сторінка блога
 @main.route('/blog', methods=['GET', 'POST'])
 def index():
+    #пошук !тільки серед постів!   за допомогою  аргумента "search?q=" 
     q = request.args.get('q')
 
     page = request.args.get('page')
@@ -117,6 +120,8 @@ def index():
     return render_template('index.html', posts=posts, pages=pages)
 
 
+
+#Створення  коментарів під постом 
 @main.route('/create-comment/<slug>', methods=['GET', 'POST'])
 @login_required
 def create_comment(slug):
@@ -129,6 +134,7 @@ def create_comment(slug):
     else:
         post = Post.query.filter_by(id=post_id)
         if post:
+            #запис коментаря в базу данних
             comment = Comment(body=text, author=current_user._get_current_object(), post_id=post_id)
             db.session.add(comment)
             db.session.commit()
@@ -142,24 +148,26 @@ def create_comment(slug):
 
 
 
-
-@main.route("/delete-comment/<slug>")
+#Видалення коментаря
+@main.route("/delete-comment/<comment_id>")
 @login_required
-def delete_comment(slug):
+def delete_comment(comment_id):
+    comment = Comment.query.filter_by(id=comment_id).first()
     
-    comment = Comment.query.filter(Comment.author==current_user).all()
+    slug = Post.query.filter(Post.id==comment.post_id).first().slug
     
     if not comment:
         flash('Comment does not exist.', category='error')
-    elif current_user.id != comment.author and current_user.id != comment.post.author:
+    elif current_user.id != comment.author_id and current_user.id != comment.post.author_id:
         flash('You do not have permission to delete this comment.', category='error')
     else:
         db.session.delete(comment)
         db.session.commit()
+        return redirect(url_for('main.post_detail', slug=slug))
+    return redirect(url_for('main.index'))    
+  
 
-    return redirect(url_for('main.post_detail', slug=slug))     
-
-# главная страница
+# Головна сторніка новин 
 @main.route('/', methods=['GET', 'POST'])
 @main.route('/home', methods=['GET', 'POST'])
 def home_view():
@@ -167,7 +175,7 @@ def home_view():
     return render_template('block.html')
 
 
-# Посто по слагу
+# Детальна інформація про пост з коментарями
 @main.route('/<slug>/')
 def post_detail(slug):
     post = Post.query.filter(Post.slug == slug).first()
@@ -175,14 +183,17 @@ def post_detail(slug):
     return render_template('post_d.html', post=post)
 
 
+
+#Допоміжна сторінка 
 @main.route('/help')
 def helper():
+    print(current_user)
     return 'this is help page'
 
 
 
 
-
+#Не реалізована функція
 @main.route('/user/<int:id>/')
 def user_profile(id):
     return "Profile page of user #{}".format(id)

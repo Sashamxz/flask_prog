@@ -43,7 +43,7 @@
         data-bs-toggle="dropdown"></button>
       <ul class="dropdown-menu">
         <li>
-          <a href="{{ url_for('main.delete_comment', slug=slug) }}"
+          <a  href="/delete-comment/{{comment.id}}"
             class="dropdown-item">Delete</a>
         </li>
       </ul>

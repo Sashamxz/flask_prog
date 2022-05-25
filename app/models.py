@@ -118,7 +118,7 @@ class User(UserMixin, db.Model):
    
    
     def __repr__(self):
-        return '<User: {}>'.format(self.name)
+        return '<User: {}>'.format(self.username)
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -128,7 +128,7 @@ class Post(db.Model):
     body = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now)
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     likes = db.relationship('Like', backref='post', passive_deletes=True)
 
     def __init__(self, *args, **kwargs):
