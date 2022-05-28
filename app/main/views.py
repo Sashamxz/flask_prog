@@ -1,12 +1,12 @@
 from distutils.log import error
-from flask import render_template, request, redirect, url_for, flash, make_response, session, current_app
+from flask import render_template, request, redirect, url_for, flash, make_response, session, current_app , jsonify
 from werkzeug.urls import url_parse
 from app.auth.forms import LoginForm, RegistrationForm
 from flask_login import login_required, login_user, current_user, logout_user
 from . import main
 from .. import db
 from .forms import PostForm ,CommentForm
-from ..models import Post, Subscribe , User , Comment , Permission
+from ..models import Post, Subscribe , User , Comment , Permission , Like
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -181,6 +181,22 @@ def post_detail(slug):
     post = Post.query.filter(Post.slug == slug).first()
     
     return render_template('post_d.html', post=post)
+
+
+@main.route('/like/<int:post_id>/<action>')
+@login_required
+def like_action(post_id, action):
+    post = Post.query.filter_by(id=post_id).first_or_404()
+    if action == 'like':
+        current_user.like_post(post)
+        db.session.commit()
+    if action == 'unlike':
+        current_user.unlike_post(post)
+        db.session.commit()
+    return redirect(request.referrer)
+
+
+
 
 
 

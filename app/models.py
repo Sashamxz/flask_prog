@@ -88,7 +88,23 @@ class User(UserMixin, db.Model):
     active = db.Column(db.Boolean(), default=False, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     comments = db.relationship('Comment', backref='author', passive_deletes=True)
-    likes = db.relationship('Like', backref='user', passive_deletes=True)
+    liked = db.relationship('Like', foreign_keys='Like.user_id', backref='user', passive_deletes=True)
+      
+    def like_post(self, post):
+        if not self.has_liked_post(post):
+            like = Like(user_id=self.id, post_id=post.id)
+            db.session.add(like)
+
+    def unlike_post(self, post):
+        if self.has_liked_post(post):
+            Like.query.filter_by(
+                user_id=self.id,
+                post_id=post.id).delete()
+
+    def has_liked_post(self, post):
+        return Like.query.filter(
+            Like.user_id == self.id,
+            Like.post_id == post.id).count() > 0
 
 
     def __init__(self, **kwargs):
@@ -120,6 +136,9 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User: {}>'.format(self.username)
 
+
+
+
 class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
@@ -129,7 +148,7 @@ class Post(db.Model):
     created = db.Column(db.DateTime, default=datetime.now)
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
     author_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    likes = db.relationship('Like', backref='post', passive_deletes=True)
+    likes = db.relationship('Like', backref='post', passive_deletes=True,  lazy='dynamic')
 
     def __init__(self, *args, **kwargs):
         super(Post, self).__init__(*args, **kwargs)
@@ -150,6 +169,8 @@ class Post(db.Model):
         return '<Post id: {}, title: {}>'.format(self.id, self.title)
 
 
+
+
 class Tag(db.Model):
     __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
@@ -164,15 +185,20 @@ class Tag(db.Model):
         return '{}'.format(self.name)
 
 
+
+
 class Subscribe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True)
     time = db.Column(db.DateTime, default=datetime.now)
 
 
+
 @login.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
 
 
 class Comment(db.Model):
@@ -186,12 +212,9 @@ class Comment(db.Model):
 
 
 
-
-
 class Like(db.Model):
+    __tablename__ = 'likes'
     id = db.Column(db.Integer, primary_key=True)
     date_created = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
-    author = db.Column(db.Integer, db.ForeignKey(
-        'users.id', ondelete="CASCADE"), nullable=False)
-    post_id = db.Column(db.Integer, db.ForeignKey(
-        'posts.id', ondelete="CASCADE"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id', ondelete="CASCADE"), nullable=False)

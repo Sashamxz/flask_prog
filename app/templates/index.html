@@ -8,8 +8,17 @@
   
 {% block content_title %}
     Posts
+   
 
-    {%for  msg in get_flashed_messages()%}
+
+{% for post in posts %}
+
+  
+{% endfor %}
+
+    
+    
+      {%for  msg in get_flashed_messages()%}
                     
     <div class="flashes">
        <samp display= "block"  style ="background-color:rgba(236, 236, 236, 0.77); color: rgba(83, 88, 84, 0.952) ; text-align: center " >{{ msg }}</samp>
@@ -26,9 +35,24 @@
 
 
     {% for post in pages.items %}
+
+
         
         <p>
-            <a href="{{ url_for('main.post_detail', slug = post.slug) }}" style="text-decoration:none;"> {{ post.title }} </a>
+            <a href="{{ url_for('main.post_detail', slug = post.slug) }}" style="text-decoration:none;"> {{ post.title }} 
+              <span id="likes-count-{{post.id}}">
+            {% if current_user.is_authenticated %}
+              {% if current_user.has_liked_post(post) %}
+                <a href="{{ url_for('main.like_action', post_id=post.id, action='unlike') }}">Unlike</a>
+              {% else %}
+                <a href="{{ url_for('main.like_action', post_id=post.id, action='like') }}">Like</a>
+              {% endif %}
+              {% endif %}
+        {{ post.likes.count() }} likes
+            
+            
+            
+            </a>
         </p>
 
 
