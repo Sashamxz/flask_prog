@@ -27,4 +27,4 @@ manager = Manager(app)
 
 if __name__ == '__main__':
 
-    app.run(host="10.0.0.66", port='7777', debug=True)
+    app.run(host="0.0.0.0", port='5000', debug=True)
