@@ -1,7 +1,7 @@
 import re
 from flask import current_app, request, url_for
 from enum import unique
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask_login import UserMixin
 from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -85,6 +85,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     password = db.Column(db.String(64), nullable=False)
     password_hash = db.Column(db.String(128))
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     active = db.Column(db.Boolean(), default=False, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     comments = db.relationship('Comment', backref='author', passive_deletes=True)
@@ -115,23 +116,47 @@ class User(UserMixin, db.Model):
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
 
-    @property
-    def password(self):
-        raise AttributeError('password is not a readable attribute')
 
-    @password.setter
-    def password(self, password):
+
+    def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
-    def verify_password(self, password):
+
+    def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
 
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
 
+
     def is_administrator(self):
         return self.can(Permission.ADMIN)
    
+
+    def to_dict(self, include_email=False):
+        data = {
+            'id': self.id,
+            'username': self.username,
+            'last_seen': self.last_seen.isoformat() + 'Z',
+          
+        }
+        if include_email:
+            data['email'] = self.email
+        return data
+
+
+
+    def from_dict(self, data, new_user=False):
+        for field in ['username', 'email']:
+            if field in data:
+                setattr(self, field, data[field])
+        if new_user and 'password' in data:
+            self.set_password(data['password'])
+
+
+
+
    
     def __repr__(self):
         return '<User: {}>'.format(self.username)

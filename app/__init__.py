@@ -55,10 +55,10 @@ def create_app(config_name):
     from .auth import auth as auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
 
-    # from app.api import bp as api_bp
-    # app.register_blueprint(api_bp, url_prefix='/api')
+    from app.api import bp as api_bp
+    app.register_blueprint(api_bp, url_prefix='/api')
 
-    # user_create
+    # лог
     app.logger.setLevel(logging.INFO)
     app.logger.info('Flask_proj startup')
     
