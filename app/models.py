@@ -1,4 +1,7 @@
+from email import message
 import re
+import base64
+import os
 from flask import current_app, request, url_for
 from enum import unique
 from datetime import datetime, timedelta
@@ -83,14 +86,17 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     email = db.Column(db.String(64), nullable=False, unique=True)
     username = db.Column(db.String(64), index=True, unique=True)
-    password = db.Column(db.String(64), nullable=False)
     password_hash = db.Column(db.String(128))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     active = db.Column(db.Boolean(), default=False, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     comments = db.relationship('Comment', backref='author', passive_deletes=True)
     liked = db.relationship('Like', foreign_keys='Like.user_id', backref='user', passive_deletes=True)
-      
+    token = db.Column(db.String(32), index=True, unique=True)
+    token_expiration = db.Column(db.DateTime)
+
+
+
     def like_post(self, post):
         if not self.has_liked_post(post):
             like = Like(user_id=self.id, post_id=post.id)
@@ -155,6 +161,32 @@ class User(UserMixin, db.Model):
             self.set_password(data['password'])
 
 
+    def get_token(self, expires_in=3600):
+        now = datetime.utcnow()
+        if self.token and self.token_expiration > now + timedelta(seconds=90):
+            return self.token
+        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
+        self.token_expiration = now + timedelta(seconds=expires_in)
+        db.session.add(self)
+        return self.token
+
+    def revoke_token(self):
+        self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
+
+
+    @staticmethod
+    def check_token(token):
+        user = User.query.filter_by(token=token).first()
+        if user is None or user.token_expiration < datetime.utcnow():
+            return None
+        return user
+
+
+
+
+
+
+
 
 
    
@@ -174,6 +206,9 @@ class Post(db.Model):
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
     author_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     likes = db.relationship('Like', backref='post', passive_deletes=True,  lazy='dynamic')
+    
+
+
 
     def __init__(self, *args, **kwargs):
         super(Post, self).__init__(*args, **kwargs)
@@ -243,3 +278,14 @@ class Like(db.Model):
     date_created = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id', ondelete="CASCADE"), nullable=False)
+
+
+
+
+class ContactUs(db.Model):
+    __tablename__ = 'contuct_us'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    email = db.Column(db.String(50), unique=True)
+    subject = db.Column(db.String(50))
+    message = db.Column(db.Text)

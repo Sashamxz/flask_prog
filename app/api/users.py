@@ -1,14 +1,15 @@
-from flask import url_for, jsonify, request
+from flask import url_for, jsonify, request, abort
 from app import db
 from app.models import User
 from . import bp
 from app.api.errors import bad_request
-
+from app.api.auth import token_auth
 
 
 
 
 @bp.route('/users/<int:id>', methods=['GET'])
+@token_auth.login_required
 def get_user(id):
     return jsonify(User.query.get_or_404(id).to_dict())
 
