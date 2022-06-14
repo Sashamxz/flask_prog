@@ -12,6 +12,9 @@ from ..models import Post, Subscribe, User, Comment, Permission, Like , ContactU
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
+
+
+
 # Обробник підписки на новини
 @main.route('/subscribe', methods=['POST'])
 def subscribe():
@@ -49,6 +52,9 @@ def subscribe():
     return render_template('block.html')
 
 
+
+
+#обробка форми 'contact_us'
 @main.route('/contact', methods=['GET', 'POST'])
 def contact():
     email = request.form.get('email')
@@ -62,7 +68,7 @@ def contact():
 
     return render_template('block.html')
 
-#Запис в файл "contuct_us"
+#Запис в файл повідомлень з форми "contuct_us"
 # with open('client.txt', 'a', encoding='utf-8') as f:
 #     text = ' '
 #     count = 0 
@@ -78,19 +84,29 @@ def contact():
 
 
 
-@main.route('/contact', methods=['GET', 'POST'])
-def show_contact():
+#перегляд повідомлень від користувачів
+@main.route('/contact/message', methods=['GET', 'POST'])
+@login_required
+def show_contact_msg():
+    if current_user.can(Permission.MODERATE) or current_user.can(Permission.ADMIN):
+        page = request.args.get('page')
+
+        if page and page.isdigit():
+            page = int(page)
+        else:
+            page = 1
+
+        messages = ContactUs.query.order_by(ContactUs.created.desc())
+
+        pages = messages.paginate(page=page, per_page=5)
+
+        return render_template('messages_contact.html', messages = messages, pages=pages)
+    return render_template('block.html')
     
 
 
 
-
-
-
-
 # Створення поста
-
-
 @main.route('/create', methods=['POST', 'GET'])
 @login_required
 def create_post():

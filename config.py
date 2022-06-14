@@ -5,12 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 basedir = os.path.join(os.path.dirname(__file__))
 
-# # Platforma
-# WIN = sys.platform.startswith('win')
-# if WIN:
-#     prefix = 'sqlite:///'
-# else:
-#     prefix = 'sqlite:////'
+
 
 
 class Config():

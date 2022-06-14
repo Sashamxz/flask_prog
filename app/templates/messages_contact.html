@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    
+    {% for message in messages %}
+
+    {% endfor %}
+
+    {% for message in pages.items %}
+       
+    <p> Name: " {{message.name}} "
+        Email: " {{message.email}} "<br>
+        {{message.message}}
+        <br>{{message.created}}
+    </p>
+
+    {% endfor %}
+   
+   
+   
+    <nav>
+        <ul class="pagination pagination-sm">
+
+          {% for page in pages.iter_pages() %}
+          <li class="page-item"  {% if not pages.has_prev %} class="page-item disabled"{% endif %}>
+                <a class="page-link" href="//contact/message?page={{ page }}">{{ page }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+
+      {% endblock %} 
