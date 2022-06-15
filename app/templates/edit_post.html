@@ -18,19 +18,29 @@
 
         <form action="{{ url_for('main.edit_post', slug=post.slug) }}" method="POST">
             {% for field in form %}
-           
+            <style>
+                #body {
+                    width:  630px;
+                    height: 400px;
+                    
+                }
+                </style>
             <div class="form-group">
                 
                 {{ field.label(class = 'control-label') }}
                 {{ field(class = 'form-control') }}
-            
+               <br>
             </div>    
             {% endfor %}   
             
             
             <button type="submit" class="btn btn-success">Edit</button>
 
-
+                    <br>
+            
+                  <a href="{{ url_for('main.delete_post', slug = post.slug) }}" class="dropdown-item">Delete</a>
+                
+              
 
         </form>     
     </div>

@@ -8,7 +8,7 @@
 
 {% block content_title %}
      
-    New post
+    <h4>New post</h4>
         
 {% endblock %}    
 
@@ -16,18 +16,27 @@
    
     <div class="col-md-6">
 
-        <form action="{{ url_for('main.create_post',  next=request.endpoint) }}" method="POST">
+        <form action="{{ url_for('main.create_post',  next=request.endpoint) }}" , method="POST">
             {% for field in form %}
+            <style>
+                #body {
+                    width:  630px;
+                    height: 400px;
+                    
+                }
+                </style>
            
             <div class="form-group">
-                
+
+                 <br> 
                 {{ field.label(class = 'control-label') }}
+              
                 {{ field(class = 'form-control') }}
             
             </div>    
             {% endfor %}   
             
-            
+            <br>
             <button type="submit" class="btn btn-success">Create</button>
 
 

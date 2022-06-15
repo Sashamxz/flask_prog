@@ -8,15 +8,28 @@
 
 {% block content_title %}
      
-    {{ post.title }}
-        
+   <h3> {{ post.title }} </h3>   
+
 {% endblock %}    
 
 
 {% block content %}
 
    
-{{ post.body }}
+<div id="text_post"> 
+  <style>
+   #text_post{
+      max-width: 960px;
+      margin: 30px auto;
+      padding: 0 15px;
+      background: white; }  
+  </style>
+ 
+ 
+ 
+  {{ post.body }} 
+
+</div>
 
     {% for comment in post.comments %}
     

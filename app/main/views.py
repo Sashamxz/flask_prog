@@ -131,7 +131,7 @@ def create_post():
 
 
 # Редагування поста
-@main.route('/<slug>/edit/', methods=['POST', 'GET'])
+@main.route('/<slug>/edit', methods=['POST', 'GET'])
 @login_required
 def edit_post(slug):
     # перевірка доступу для редагування
@@ -172,6 +172,33 @@ def index():
     pages = posts.paginate(page=page, per_page=5)
 
     return render_template('index.html', posts=posts, pages=pages)
+
+
+ #видалення поста по slag
+@main.route('/<slug>/delete-post', methods=['POST', 'GET'])
+@login_required
+def delete_post(slug):
+    # перевірка доступу для видалення
+    if current_user.can(Permission.MODERATE) or current_user.can(Permission.ADMIN):
+        post = Post.query.filter(Post.slug == slug).first()
+        if not post:
+            flash("Post does not exist.", category='error')
+        
+          
+        else:
+            db.session.delete(post)
+            db.session.commit()
+            flash('Post deleted.', category='success')
+    else:
+        flash('You do not have permission to delete this post.', category='error')
+    
+    return redirect (url_for('main.index'))
+
+
+
+
+
+
 
 
 # Створення  коментарів під постом
