@@ -1,5 +1,5 @@
 # flask_proj
-Simple blog, powered by best framework in the world - Flask.
+Simple blog, powered by best framework in the World - Flask.
 
 Install OS Packages
 You will at least need the python development package though there 
