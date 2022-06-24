@@ -14,6 +14,9 @@ class Config():
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ELASTICSEARCH_URL = os.getenv('ELASTICSEARCH_URL')
     FLASK_ADMIN = os.getenv('FLASK_ADMIN')
+    WTF_CSRF_ENABLED = False
+    SECURITY_PASSWORD_SALT = os.getenv('SALT')
+    SECURITY_PASSWORD_HASH = 'bcrypt'
 
     @staticmethod
     def init_app(app):
@@ -22,9 +25,7 @@ class Config():
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    WTF_CSRF_ENABLED = False
-    SECURITY_PASSWORD_SALT = os.getenv('SALT')
-    SECURITY_PASSWORD_HASH = 'bcrypt'
+    
     SQLALCHEMY_DATABASE_URI = os.getenv('DEV_DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')
 
@@ -36,8 +37,23 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     pass
 
+class DockerConfig(Config):
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
+
+        # log to stderr
+        import logging
+        from logging import StreamHandler
+        file_handler = StreamHandler()
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+    
+    SQLALCHEMY_DATABASE_URI = os.getenv('DOCKER_DATABASE_URL')
+
 
 config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
-    'production': ProductionConfig}
+    'production': ProductionConfig,
+    'docker': DockerConfig,}

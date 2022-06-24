@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
-import sys
+import os
 from flask_script import Manager
 from flask_migrate import Migrate
 from app import create_app, db
-import os
 from dotenv import load_dotenv
+from app.models import User,  Role, Permission, Post, Comment, Like
+
+
+
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -18,13 +21,15 @@ migrate = Migrate(app, db)
 manager = Manager(app)
 
 
-# @app.cli.command()
-# def deploy():
-#     """Run deployment tasks."""
-#     # migrate database to latest revision
-#     upgrade()
+@app.shell_context_processor
+def make_shell_context():
+    return {db: db, User: User, Post: Post, Comment: Comment,
+     Like: Like, Role:Role, Permission:Permission,}
+
+
+
 
 
 if __name__ == '__main__':
 
-    app.run(host="0.0.0.0", port='5000', debug=True)
+    app.run(host="0.0.0.0", port='5000')

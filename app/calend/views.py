@@ -16,7 +16,7 @@ def date_now():
 
 # @calend.route('/calendar', methods=['GET'])
 def create_calendar():    
-    aln = calendar.LocaleHTMLCalendar(locale="en_US.UTF-8")
+    aln = calendar.LocaleHTMLCalendar(locale="C.UTF-8")
     show =  aln.formatyear(2022)
     return show
 

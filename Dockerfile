@@ -1,11 +1,10 @@
 FROM python:3.8-slim-buster
 
 ENV FLASK_APP flask_proj.py
-ENV FLASK_CONFIG development
+ENV FLASK_CONFIG docker
 
 RUN useradd -ms /bin/bash flask
-RUN export LC_ALL="en_US.UTF-8"
-RUN export LC_CTYPE="en_US.UTF-8"
+
 
 
 
@@ -19,9 +18,16 @@ RUN env/bin/pip install gunicorn
 
 COPY app app
 COPY migrations migrations
+
 COPY flask_proj.py config.py start.sh ./
 
 ENV FLASK_APP flask_proj.py
+
+
+RUN export LC_ALL=en_US.UTF-8
+RUN export LANG=en_US.UTF-8
+
+
 
 RUN chown -R flask:flask ./
 RUN chmod +x start.sh
