@@ -1,44 +1,56 @@
 {% extends 'base.html' %}
 
-
-      
-
-
-
   
-{% block content_title %}
-    Posts
+  {% block content_title %}
+      <!--Заголовок поста + кнопка "створити пост"  -->
+      <div id="post">
+          
+          <style>
+
+            #post{
+              display:inline-flex;
+            }
+            #button_c{
+              display: inline-flex;
+              margin-left: 900px;
+          
+            }  
+          </style>
+
+         <h3>  Posts: </h3> 
+         
+        <!-- якщо користувач авторизований + має рівень доступу, відображается кнопка "створити пост"-->
+
+        {%if current_user.is_authenticated and  current_user.can(Permission.WRITE)%}
+        <a id="button_c"  class="nav-link active" aria-current="page"  href="{{ url_for('main.create_post') }}">create post</a>
+        {% endif %}
+
+      </div>
+
+
+ 
    
-
-
-{% for post in posts %}
-
-  
-{% endfor %}
-
-    
-    
-      {%for  msg in get_flashed_messages()%}
-                    
-    <div class="flashes">
-       <samp display= "block"  style ="background-color:rgba(236, 236, 236, 0.77); color: rgba(83, 88, 84, 0.952) ; text-align: center " >{{ msg }}</samp>
-    </div>
-    
-    {% endfor %}
-{% endblock %}
-
-{% block content %}
-    
-  
+         <!-- спливаючі сповіщення -->
+        {%for  msg in get_flashed_messages()%}
+                          
+          <div class="flashes">
+            <samp display= "block"  style ="background-color:rgba(236, 236, 236, 0.77); color: rgba(83, 88, 84, 0.952) ; 
+            text-align: center " >{{ msg }}</samp>
+          </div>
+          
+        {% endfor %}
+ 
+ {% endblock %}
 
 
 
 
-    {% for post in pages.items %}
+  {% block content %}
+      <!-- заголовок поста для перегляду + кількість вподобань, вподобати/скасувати вподобання  -->    
+      {% for post in pages.items %}
 
-
-        
         <p>
+          <br>
             <a href="{{ url_for('main.post_detail', slug = post.slug) }}" style="text-decoration:none;"> {{ post.title }} 
               <span id="likes-count-{{post.id}}">
             {% if current_user.is_authenticated %}
@@ -49,17 +61,16 @@
               {% endif %}
               {% endif %}
         {{ post.likes.count() }} likes
-            
-            
-            
             </a>
         </p>
-
 
     {% endfor %}
 
 
+    <!-- пагінація по сторінках -->
     <nav>
+      <br>
+      <br>
         <ul class="pagination pagination-sm">
          
           {% for page in pages.iter_pages() %}
@@ -70,4 +81,4 @@
       </nav>
        
     
-{% endblock %}    
+  {% endblock %}    

@@ -1,9 +1,6 @@
 from distutils.log import error
-from email import message
-from re import S
 from flask import render_template, request, redirect, url_for, flash, make_response, session, current_app
 from werkzeug.urls import url_parse
-from app.auth.forms import LoginForm, RegistrationForm
 from flask_login import login_required, login_user, current_user, logout_user
 from . import main
 from .. import db
@@ -68,6 +65,7 @@ def contact():
 
     return render_template('block.html')
 
+
 #Запис в файл повідомлень з форми "contuct_us"
 # with open('client.txt', 'a', encoding='utf-8') as f:
 #     text = ' '
@@ -84,7 +82,7 @@ def contact():
 
 
 
-#перегляд повідомлень від користувачів
+#перегляд повідомлень від користувачів "зв'яжіться з нами"
 @main.route('/contact/message', methods=['GET', 'POST'])
 @login_required
 def show_contact_msg():
@@ -107,7 +105,7 @@ def show_contact_msg():
 
 
 # Створення поста
-@main.route('/create', methods=['POST', 'GET'])
+@main.route('/create-post', methods=['POST', 'GET'])
 @login_required
 def create_post():
     if current_user.can(Permission.WRITE):
@@ -130,6 +128,7 @@ def create_post():
     return redirect(url_for('main.index'))
 
 
+
 # Редагування поста
 @main.route('/<slug>/edit', methods=['POST', 'GET'])
 @login_required
@@ -148,6 +147,7 @@ def edit_post(slug):
         return render_template('edit_post.html', post=post, form=form)
     flash('Доступ ограничен')
     return redirect(url_for('main.index'))
+
 
 
 # сторінка блога
@@ -172,6 +172,7 @@ def index():
     pages = posts.paginate(page=page, per_page=5)
 
     return render_template('index.html', posts=posts, pages=pages)
+
 
 
  #видалення поста по slag
@@ -201,28 +202,27 @@ def delete_post(slug):
 
 
 
-# Створення  коментарів під постом
-@main.route('/create-comment/<slug>', methods=['GET', 'POST'])
-@login_required
-def create_comment(slug):
+# # Створення  коментарів під постом
+# @main.route('/create-comment/<slug>', methods=['GET', 'POST'])
+# @login_required
+# def create_comment(slug):
 
-    post_id = Post.query.filter(Post.slug == slug).first().id
-    text = request.form.get('text')
-
-    if not text:
-        flash('Comment cannot be empty.', category='error')
-    else:
-        post = Post.query.filter_by(id=post_id)
-        if post:
-            # запис коментаря в базу данних
-            comment = Comment(
-                body=text, author=current_user._get_current_object(), post_id=post_id)
-            db.session.add(comment)
-            db.session.commit()
-        else:
-            flash('Post does not exist.', category='error')
-
-    return redirect(url_for('main.post_detail', slug=slug))
+    
+#     if form.validate_on_submit():
+        
+#         post = Post.query.filter_by(id=post_id)
+#         if post:
+#             # запис коментаря в базу данних
+           
+#             comment = Comment(
+#                 body=form.body.data, author=current_user._get_current_object(), post_id=post_id)
+#             db.session.add(comment)
+#             db.session.commit()
+#             return render_template('post_d.html', slug=slug, form=form)
+#         else:
+#             flash('Post does not exist.', category='error')
+#         return redirect(url_for('main.index'))
+       
 
 
 # Видалення коментаря
@@ -244,6 +244,7 @@ def delete_comment(comment_id):
     return redirect(url_for('main.index'))
 
 
+
 # Головна сторніка новин
 @main.route('/', methods=['GET', 'POST'])
 @main.route('/home', methods=['GET', 'POST'])
@@ -252,14 +253,39 @@ def home_view():
     return render_template('block.html')
 
 
+
 # Детальна інформація про пост з коментарями
-@main.route('/<slug>/')
+@main.route('/<slug>/', methods=['GET', 'POST'])
 def post_detail(slug):
-    post = Post.query.filter(Post.slug == slug).first()
+    post_id = Post.query.filter(Post.slug == slug).first().id
+    post = Post.query.filter_by(id=post_id).first()
+    form = CommentForm()
+ 
+    if form.validate_on_submit():
+        if post:
+            # запис коментаря в базу данних
+           
+            comment = Comment(
+                body=form.body.data, author=current_user._get_current_object(), post=post,)
+            db.session.add(comment)
+            db.session.commit()
+        else:
+            flash('Post does not exist.', category='error')
+            return redirect(url_for('main.index'))
+    
+    page = request.args.get('page', 1, type=int)
+    if page == -1:
+        page = (post.comments.count() - 1) // \
+            current_app.config['FLASKY_COMMENTS_PER_PAGE'] + 1
+    pagination = post.comments.order_by(Comment.timestamp.asc()).paginate( 
+        page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
+        error_out=False)
+    comments = pagination.items
 
-    return render_template('post_d.html', post=post)
+    return render_template('post_d.html', post=post, 
+                            comments=comments, pagination=pagination, form = form)    
 
-
+        
 @main.route('/like/<int:post_id>/<action>')
 @login_required
 def like_action(post_id, action):

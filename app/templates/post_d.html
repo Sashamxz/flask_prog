@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
 
 {% block title %}
   
@@ -7,8 +9,31 @@
 {% endblock %}
 
 {% block content_title %}
-     
-   <h3> {{ post.title }} </h3>   
+<!--заголовок поста + кнопка видалення поста , для користувачів з рівнем доступу Модератор і вище -->
+    <div id="title_p">   
+   
+     <h3> {{ post.title }} : </h3> 
+
+          <style>
+            #title_p{
+                display:flex;
+            }
+
+            #button_d{
+              display: inline-flex;
+              margin-left: 900px;
+              width: 120px;
+              height:30px; 
+                    
+            }  
+          </style>
+
+     <!-- якщо користувач авторизований + має рівень доступу, відображается кнопка та є можливість  "видалити  пост"-->
+    {%if current_user.is_authenticated and  current_user.can(Permission.MODERATE)%}
+    <a id="button_d"  class="nav-link active" aria-current="page"  href="{{ url_for('main.delete_post', slug =post.slug) }}">delete post</a>
+    {%endif%}
+
+</div> 
 
 {% endblock %}    
 
@@ -16,65 +41,71 @@
 {% block content %}
 
    
-<div id="text_post"> 
-  <style>
-   #text_post{
-      max-width: 960px;
-      margin: 30px auto;
-      padding: 0 15px;
-      background: white; }  
-  </style>
+    <div id="text_post"> 
+      <style>
+      #text_post{
+          max-width: 960px;
+          margin: 30px auto;
+          padding: 0 15px;
+          background: white; }  
+      </style>
  
  
- 
-  {{ post.body }} 
+     <!--тіло поста  -->
+      {{ post.body }} 
 
-</div>
+    </div>
 
     {% for comment in post.comments %}
     
     <br\>
-    <li class="comment">
-      <div class="comment-content">
-        <div class="comment-author">{{ comment.author.username }}</div><div class="comment-date">{{ comment.timestamp }}</div>
-        
-        <div class="comment-body">{{comment.body}}</div>
-     
-      </div>
+    
+    <!--відображення коментарів -->
+      <li class="comment">
+          <div class="comment-content">
+          <div class="comment-author">{{ comment.author.username }}</div><div class="comment-date">{{ comment.timestamp }}</div>
+          
+          <div class="comment-body">{{comment.body}}</div>
+      
+          </div>
       </li>
               
         
-        
+        <!--кнопка видалення  коментаря, для користувача який створив його або має відповідний рівень доступу  -->
+        <div class="btn-group">
+          <button
+            type="button"
+            class="btn btn-sm btn-primary dropdown-toggle"
+            data-bs-toggle="dropdown"></button>
+          <ul class="dropdown-menu">
+            <li>
+              <br>
+               
+              <a  href="/delete-comment/{{comment.id}}"
+                class="dropdown-item">Delete</a>
+                
+            </li>
+            <br>
+          </ul>
+          
+        </div>
+      
+
+  {% endfor %}
+
+    <br>
+    {% if post.comments.count() > 0 %}
+ 
+      <span class="label label-primary">{{ post.comments.count() }} comments</span>
     
-    
-    
-    
-    <div class="btn-group">
-      <button
-        type="button"
-        class="btn btn-sm btn-primary dropdown-toggle"
-        data-bs-toggle="dropdown"></button>
-      <ul class="dropdown-menu">
-        <li>
-          <a  href="/delete-comment/{{comment.id}}"
-            class="dropdown-item">Delete</a>
-        </li>
-      </ul>
+      {%endif%}
+
+      <h4 id="comments">Comments:</h4>
+      <div class="comment-form">
+        {{ wtf.quick_form(form) }}
     </div>
-   
+       
+      
 
-    {% endfor %}
-
-    <br />
-    <form class="input-group mb-3" method="POST" action="/create-comment/{{post.slug}}">
-        <input
-          type="text"
-          id="text"
-          name="text"
-          class="form-control"
-          placeholder="Comment something!"
-        />
-       <button type="submit"class="btn btn-primary">Comment</button>
-    </form>
 
 {% endblock %}

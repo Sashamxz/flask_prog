@@ -2,13 +2,16 @@ from importlib.resources import path
 import os
 from dotenv import load_dotenv
 
+
+
+
 load_dotenv()
 basedir = os.path.join(os.path.dirname(__file__))
 
 
 
 
-class Config():
+class Config:
     DEBUG = True
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -17,6 +20,7 @@ class Config():
     WTF_CSRF_ENABLED = False
     SECURITY_PASSWORD_SALT = os.getenv('SALT')
     SECURITY_PASSWORD_HASH = 'bcrypt'
+    FLASKY_COMMENTS_PER_PAGE  = 10
 
     @staticmethod
     def init_app(app):
@@ -31,13 +35,21 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
-    pass
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
+        'sqlite://'
+    WTF_CSRF_ENABLED = False
+
 
 
 class ProductionConfig(Config):
     pass
 
+
 class DockerConfig(Config):
+    
+    SQLALCHEMY_DATABASE_URI = os.getenv('DOCKER_DATABASE_URL')
+    
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)
@@ -49,7 +61,7 @@ class DockerConfig(Config):
         file_handler.setLevel(logging.INFO)
         app.logger.addHandler(file_handler)
     
-    SQLALCHEMY_DATABASE_URI = os.getenv('DOCKER_DATABASE_URL')
+   
 
 
 config = {
