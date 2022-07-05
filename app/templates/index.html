@@ -70,7 +70,14 @@
     
       <nav> 
         <br>
-      <ul class="pagination" >
+        <style>
+      
+          #pagination_index{
+            margin-top: 400px;
+          }
+
+        </style>
+      <ul id="pagination_index" class="pagination" >
        
             <li {%if not pages.has_prev%} class="page-item disabled"  {%endif%}>
               <a class="page-link" href="/blog?page={{ pages.prev_num }}"  aria-disabled="true">Previous</a>
@@ -97,6 +104,10 @@
       
         </nav>
 
-
+        <style>
+          #footer{
+            margin-top: 750px !important;;
+          }
+        </style>
     
   {% endblock %}    
