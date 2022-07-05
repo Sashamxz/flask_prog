@@ -18,9 +18,8 @@
           </style>
 
          <h3>  Posts: </h3> 
-         
         <!-- якщо користувач авторизований + має рівень доступу, відображается кнопка "створити пост"-->
-
+        
         {%if current_user.is_authenticated and  current_user.can(Permission.WRITE)%}
         <a id="button_c"  class="nav-link active" aria-current="page"  href="{{ url_for('main.create_post') }}">create post</a>
         {% endif %}
@@ -68,17 +67,36 @@
 
 
     <!-- пагінація по сторінках -->
-    <nav>
-      <br>
-      <br>
-        <ul class="pagination pagination-sm">
-         
-          {% for page in pages.iter_pages() %}
-          <li class="page-item"  {% if not pages.has_prev %} class="page-item disabled"{% endif %}>
-                <a class="page-link" href="/blog?page={{ page }}">{{ page }}</a></li>
-          {% endfor %}
-        </ul>
-      </nav>
+    
+      <nav> 
+        <br>
+      <ul class="pagination" >
        
+            <li {%if not pages.has_prev%} class="page-item disabled"  {%endif%}>
+              <a class="page-link" href="/blog?page={{ pages.prev_num }}"  aria-disabled="true">Previous</a>
+            </li>
+           
+          
+              <li {%if not pages.has_prev%} class="page-item disabled"  {%endif%}>
+                <a class="page-link" href="/blog?page={{ page-1 }}">{{page-1}}</a>
+            </li>
+              
+            <li  class="page-item active" aria-current="page">
+              <a class="page-link" href="/blog?page={{ page }}">{{page}}</a>
+            </li>
+
+            <li {%if not pages.has_next%} class="page-item disabled"  {%endif%}>
+              <a class="page-link" href="/blog?page={{ page+1 }}">{{page +1}}</a></li>
+            </li>
+
+
+              <li  {%if not pages.has_next%} class="page-item disabled" {% endif %}>
+                <a class="page-link" href="/blog?page={{ pages.next_num }}"  aria-disabled="true">Next</a>
+              </li> 
+         </ul>          
+      
+        </nav>
+
+
     
   {% endblock %}    

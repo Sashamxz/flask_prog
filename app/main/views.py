@@ -171,7 +171,7 @@ def index():
 
     pages = posts.paginate(page=page, per_page=5)
 
-    return render_template('index.html', posts=posts, pages=pages)
+    return render_template('index.html', posts=posts, pages=pages, page=page)
 
 
 
@@ -196,34 +196,8 @@ def delete_post(slug):
     return redirect (url_for('main.index'))
 
 
-
-
-
-
-
-
-# # Створення  коментарів під постом
-# @main.route('/create-comment/<slug>', methods=['GET', 'POST'])
-# @login_required
-# def create_comment(slug):
-
-    
-#     if form.validate_on_submit():
-        
-#         post = Post.query.filter_by(id=post_id)
-#         if post:
-#             # запис коментаря в базу данних
-           
-#             comment = Comment(
-#                 body=form.body.data, author=current_user._get_current_object(), post_id=post_id)
-#             db.session.add(comment)
-#             db.session.commit()
-#             return render_template('post_d.html', slug=slug, form=form)
-#         else:
-#             flash('Post does not exist.', category='error')
-#         return redirect(url_for('main.index'))
        
-
+ 
 
 # Видалення коментаря
 @main.route("/delete-comment/<comment_id>")
@@ -260,7 +234,8 @@ def post_detail(slug):
     post_id = Post.query.filter(Post.slug == slug).first().id
     post = Post.query.filter_by(id=post_id).first()
     form = CommentForm()
- 
+    page = request.args.get('page', type=int)
+
     if form.validate_on_submit():
         if post:
             # запис коментаря в базу данних
@@ -272,18 +247,17 @@ def post_detail(slug):
         else:
             flash('Post does not exist.', category='error')
             return redirect(url_for('main.index'))
+    if page:
+        page = int(page)
+    else:
+        page = 1
+    pagination_lim = 3 
+    comments = Comment.query.order_by(Comment.timestamp.desc())
+    pages = comments.paginate(page=page, per_page=5)
     
-    page = request.args.get('page', 1, type=int)
-    if page == -1:
-        page = (post.comments.count() - 1) // \
-            current_app.config['FLASKY_COMMENTS_PER_PAGE'] + 1
-    pagination = post.comments.order_by(Comment.timestamp.asc()).paginate( 
-        page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
-        error_out=False)
-    comments = pagination.items
 
     return render_template('post_d.html', post=post, 
-                            comments=comments, pagination=pagination, form = form)    
+                            comments=comments, page=page, pages=pages, form = form, pagination_lim=pagination_lim)    
 
         
 @main.route('/like/<int:post_id>/<action>')

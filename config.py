@@ -20,7 +20,7 @@ class Config:
     WTF_CSRF_ENABLED = False
     SECURITY_PASSWORD_SALT = os.getenv('SALT')
     SECURITY_PASSWORD_HASH = 'bcrypt'
-    FLASKY_COMMENTS_PER_PAGE  = 10
+    FLASKY_COMMENTS_PER_PAGE  = 5
 
     @staticmethod
     def init_app(app):

@@ -56,56 +56,113 @@
 
     </div>
 
-    {% for comment in post.comments %}
+    <div class="comment-form">
+      {{ wtf.quick_form(form) }}
+    </div>
     
-    <br\>
+    <h4 id="comments">Comments:</h4>
+  
+    <br>
     
-    <!--відображення коментарів -->
-      <li class="comment">
-          <div class="comment-content">
-          <div class="comment-author">{{ comment.author.username }}</div><div class="comment-date">{{ comment.timestamp }}</div>
-          
-          <div class="comment-body">{{comment.body}}</div>
-      
-          </div>
-      </li>
-              
+    
+         
+      {% for comment in pages.items %}
+      <!--відображення коментарів -->
+      <ul class="comment">
+        <div class="comment-content">
+        <div class="comment-author">{{ comment.author.username }}</div><div class="comment-date">{{ comment.timestamp.strftime("%d/%m/%y %I:%M:%S")  }}</div>
         
+        <div class="comment-body">{{comment.body}}</div>
+    
+        </div>
+      </ul>
+
+
         <!--кнопка видалення  коментаря, для користувача який створив його або має відповідний рівень доступу  -->
         <div class="btn-group">
-          <button
+          <button id="button_del"
             type="button"
             class="btn btn-sm btn-primary dropdown-toggle"
             data-bs-toggle="dropdown"></button>
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu" id="del_buttn">
             <li>
               <br>
-               
+              
+              <style>
+
+                #del_buttn{
+                  min-width: 6rem;
+                  line-height: 0.8;
+                }
+
+                #button_del{
+                  line-height: 0.8;
+                 }  
+              </style>
+           
               <a  href="/delete-comment/{{comment.id}}"
                 class="dropdown-item">Delete</a>
-                
+                <br>  
             </li>
-            <br>
+           
           </ul>
           
+          
+
+        
         </div>
+
+        <br> 
+
+      {% endfor %}
       
+        <br>
+      
+  
 
-  {% endfor %}
-
-    <br>
-    {% if post.comments.count() > 0 %}
+   
  
-      <span class="label label-primary">{{ post.comments.count() }} comments</span>
     
-      {%endif%}
 
-      <h4 id="comments">Comments:</h4>
-      <div class="comment-form">
-        {{ wtf.quick_form(form) }}
-    </div>
-       
+
+          {% if post.comments.count() > 0 %}
       
+            <span class="label label-primary">{{ post.comments.count() }} comments</span>
+          
+          {%endif%}
+
+        
+  
+        <br>
+        
+       <nav> 
+        <br>
+      <ul class="pagination" >
+       
+            <li {%if not pages.has_prev%} class="page-item disabled"  {%endif%}>
+              <a class="page-link" href="./?page={{ pages.prev_num }}"  aria-disabled="true">Previous</a>
+            </li>
+           
+          
+              <li {%if not pages.has_prev%} class="page-item disabled"  {%endif%}>
+                <a class="page-link" href="./?page={{ page-1 }}">{{page-1}}</a>
+            </li>
+              
+            <li  class="page-item active" aria-current="page">
+              <a class="page-link" href="./?page={{ page }}">{{page}}</a>
+            </li>
+
+            <li {%if not pages.has_next%} class="page-item disabled"  {%endif%}>
+              <a class="page-link" href="./?page={{ page+1 }}">{{page +1}}</a></li>
+            </li>
+
+
+              <li  {%if not pages.has_next%} class="page-item disabled" {% endif %}>
+                <a class="page-link" href="./?page={{ pages.next_num }}"  aria-disabled="true">Next</a>
+              </li> 
+         </ul>          
+      
+        </nav>
 
 
 {% endblock %}

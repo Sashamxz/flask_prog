@@ -158,6 +158,7 @@ class User(UserMixin, db.Model):
             if field in data:
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
+
             self.set_password(data['password'])
 
 
@@ -203,7 +204,7 @@ class Post(db.Model):
     slug = db.Column(db.String(140), unique=True)
     body = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now)
-    comments = db.relationship('Comment', backref='post', lazy='dynamic')
+    comments = db.relationship('Comment', backref='post', lazy='dynamic', passive_deletes=True)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     likes = db.relationship('Like', backref='post', passive_deletes=True,  lazy='dynamic')
     
