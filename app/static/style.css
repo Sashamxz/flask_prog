@@ -49,6 +49,33 @@ div#tekst_sverhu_kartinki {
    } */
 
 
+div#flash_message_blog {
+    padding: 12px;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    margin-right: 500px;
+    margin-left: 500px;
+    text-align: center;
+}
+
+div#flash_message_blog.alert-error {
+    padding: 12px;
+    border-radius: 3px;
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    border: 2px solid darkred;
+    background-color: red;
+    color: white;
+    
+    }
+    
+
+
+
+
+
+
 ul.comments {
     list-style-type: none;
     padding: 0px;

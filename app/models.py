@@ -90,6 +90,7 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     active = db.Column(db.Boolean(), default=False, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    posts = db.relationship('Post', backref='user', passive_deletes=True)
     comments = db.relationship('Comment', backref='author', passive_deletes=True)
     liked = db.relationship('Like', foreign_keys='Like.user_id', backref='user', passive_deletes=True)
     token = db.Column(db.String(32), index=True, unique=True)
@@ -204,10 +205,9 @@ class Post(db.Model):
     slug = db.Column(db.String(140), unique=True)
     body = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now)
-    comments = db.relationship('Comment', backref='post', lazy='dynamic')
     author_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     likes = db.relationship('Like', backref='post', passive_deletes=True,  lazy='dynamic')
-    
+    comments = db.relationship('Comment', backref='post', lazy='dynamic', passive_deletes=True)
 
 
 
@@ -268,8 +268,8 @@ class Comment(db.Model):
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     disabled = db.Column(db.Boolean)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id',ondelete="CASCADE"), nullable=False)
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id',ondelete='CASCADE'), passive_deletes=True )
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id', ondelete="CASCADE"), nullable=False)
 
 
 

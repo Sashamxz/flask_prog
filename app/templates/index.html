@@ -30,14 +30,9 @@
  
    
          <!-- спливаючі сповіщення -->
-        {%for  msg in get_flashed_messages()%}
-                          
-          <div class="flashes">
-            <samp display= "block"  style ="background-color:rgba(236, 236, 236, 0.77); color: rgba(83, 88, 84, 0.952) ; 
-            text-align: center " >{{ msg }}</samp>
-          </div>
-          
-        {% endfor %}
+         {% for category, message in get_flashed_messages(with_categories=True) %}
+         <div id="flash_message_blog" class="alert-{{category}}">{{category}}: {{ message }}</div>
+         {% endfor %}
  
  {% endblock %}
 

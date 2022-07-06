@@ -27,7 +27,7 @@ def subscribe():
 
             # перевірка наявності підписки
             if Subscribe.query.filter(Subscribe.email == f'{sub_cl}').all():
-                flash(" You are already subscribed ")
+                flash(" You are already subscribed ", category='info')
                 param = True
                 return render_template('block.html', param=param)
 
@@ -37,14 +37,13 @@ def subscribe():
                 db.session.add(subscribe_m)
                 db.session.commit()
                 param = True
-                flash('You were successfully subscribe !')
+                flash('You were successfully subscribe !', category='success')
                 return render_template('block.html', param=param)
 
             except BaseException:
                 print('db error')
         else:
-            flash(u'Something wrong! \
-            Confirm your entries', 'error')
+            flash('Something wrong! Confirm your entries', category ='error')
 
     return render_template('block.html')
 
@@ -61,7 +60,7 @@ def contact():
     new_contactus = ContactUs(name=name,email=email, subject=subject, message= message)
     db.session.add(new_contactus)
     db.session.commit() 
-    flash('You were successfully send message !')
+    flash('You were successfully send message !' , category= 'success')
 
     return render_template('block.html')
 
@@ -124,7 +123,8 @@ def create_post():
 
         form = PostForm()
         return render_template('create_post.html', form=form)
-    flash('Доступ ограничен')
+    else:    
+        flash('No access', category ='error')
     return redirect(url_for('main.index'))
 
 
@@ -145,7 +145,8 @@ def edit_post(slug):
 
         form = PostForm(obj=post)
         return render_template('edit_post.html', post=post, form=form)
-    flash('Доступ ограничен')
+    else:
+        flash('No access', category ='error')
     return redirect(url_for('main.index'))
 
 
