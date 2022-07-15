@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block content_title %}
+     Catalogue:  
+{% endblock %}
+
+{% block content %}
+
+<style>
+body{
+	background: #ececec;
+}
+img {
+	height: auto;
+	max-width: 100%;
+}
+.content{
+	margin-top: 50px;
+}
+.product {
+	background: #fff none repeat scroll 0 0;
+	border: 1px solid #c0c0c0;
+	height: 390px;
+	overflow: hidden;
+	padding: 25px 15px;
+	position: relative;
+	text-align: center;
+	transition: all 0.5s ease 0s;
+	margin-bottom: 20px;
+}
+.product:hover {
+	box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
+}
+.product-img {
+	height: 200px;
+}
+.product-title a {
+	color: #000;
+	font-weight: 500;
+	text-transform: uppercase;
+}
+.product-desc {
+    max-height: 60px;
+    overflow: hidden;
+}
+.product-price {
+	bottom: 15px;
+	left: 0;
+	position: absolute;
+	width: 100%;
+	color: #d51e08;
+	font-size: 18px;
+	font-weight: 500;
+}
+</style>
+
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="list-group">
+            <a href="#" class="list-group-item">T-shirts</a>
+            <a href="#" class="list-group-item">Notebook</a>
+            <a href="#" class="list-group-item">books</a>
+            
+        </div>
+    </div>
+    <div class="col-md-8 products">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="product">
+                    <div class="product-img">
+                        <a href="#"><img src={{ url_for('static', filename='t-shirts.jpg') }} alt=""></a>
+                    </div>
+                    <p class="product-title">
+                        <a href="#">T-shirt</a>
+                    </p>
+                    <p class="product-desc">Signature NYX cosmetics</p>
+                    <p class="product-price">Price: €10.00</p>
+                </div>
+            </div>
+
+
+
+            <div class="col-sm-4">
+                <div class="product">
+                    <div class="product-img">
+                        <a href="#"><img src={{ url_for('static', filename='t-shirts.jpg') }} alt=""></a>
+                    </div>
+                    <p class="product-title">
+                        <a href="#">T-shirt</a>
+                    </p>
+                    <p class="product-desc">Signature NYX cosmetics</p>
+                    <p class="product-price">Price: €10.00</p>
+            </div>
+        </div>
+
+            <div class="col-sm-4">
+                <div class="product">
+                    <div class="product-img">
+                        <a href="#"><img src={{ url_for('static', filename='t-shirts.jpg') }} alt=""></a>
+                    </div>
+                    <p class="product-title">
+                        <a href="#">T-shirt</a>
+                    </p>
+                    <p class="product-desc">Signature NYX cosmetics</p>
+                    <p class="product-price">Price: €10.00</p>
+                </div>
+            </div> 
+                
+             <div class="col-sm-4">
+                <div class="product">
+                    <div class="product-img">
+                        <a href="#"><img src={{ url_for('static', filename='t-shirts.jpg') }} alt=""></a>
+                    </div>
+                    <p class="product-title">
+                        <a href="#">T-shirt</a>
+                    </p>
+                    <p class="product-desc">Signature NYX cosmetics</p>
+                    <p class="product-price">Price: €10.00</p>
+                </div>
+            </div>
+                <div class="col-sm-4">
+                <div class="product">
+                    <div class="product-img">
+                        <a href="#"><img src={{ url_for('static', filename='t-shirts.jpg') }} alt=""></a>
+                    </div>
+                    <p class="product-title">
+                        <a href="#">T-shirt</a>
+                    </p>
+                    <p class="product-desc">Signature NYX cosmetics</p>
+                    <p class="product-price">Price: €10.00</p>
+                </div>
+            </div>
+                
+                <div class="col-sm-4">
+                <div class="product">
+                    <div class="product-img">
+                        <a href="#"><img src={{ url_for('static', filename='t-shirts.jpg') }} alt=""></a>
+                    </div>
+                    <p class="product-title">
+                        <a href="#">T-shirt</a>
+                    </p>
+                    <p class="product-desc">Signature NYX cosmetics</p>
+                    <p class="product-price">Price: €10.00</p>
+                </div>
+            </div>   
+
+        </div>
+    
+</div>
+</div>
+
+
+
+
+
+<script type="text/jscript">
+
+    $(function () {
+        $("#btn_uploadimg").click(function () {
+            var fileObj = document.getElementById("FileUpload").files[0]; // JS получает объект файла
+            if (typeof (fileObj) == "undefined" || fileObj.size <= 0) {
+                alert("Пожалуйста, выберите картинку");
+                return;
+            }
+            var formFile = new FormData();
+            formFile.append("action", "UploadVMKImagePath");  
+            formFile.append("file", fileObj); // Добавить объект файла
+
+            // первый XMLHTTPREQUEST объект
+            //var xhr = new XMLHttpRequest();
+            //xhr.open("post", "/Admin/Ajax/VMKHandler.ashx", true);
+            //xhr.onload = function () {
+            // оповещение («Загрузить завершено!»);
+            //};
+            //xhr.send(formFile);
+
+            // Второй Ajax Отправить
+
+            var form_data = formFile;
+            $.ajax({
+                url: "/upload/",
+                data: form_data,
+                type: "post",
+                dataType: "json",
+                cache: false,// Загрузить файл Нет необходимости кэшировать
+                processData: false,// Используется для сериализации параметров данных Это должно быть фальс
+                contentType: false, //должен
+                success: function (result) {
+                    alert(«Загрузить завершенную!»);
+                },
+            })
+        })
+    })
+
+
+<div>
+    <input type="file" name="FileUpload" id="FileUpload">
+    <a class="layui-btn layui-btn-mini" id="btn_uploadimg">загрузить изображение</a>
+</div>
+
+
+
+
+</script>     
+{% endblock %}

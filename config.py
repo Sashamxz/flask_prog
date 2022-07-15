@@ -1,4 +1,3 @@
-from importlib.resources import path
 import os
 from dotenv import load_dotenv
 
@@ -21,6 +20,8 @@ class Config:
     SECURITY_PASSWORD_SALT = os.getenv('SALT')
     SECURITY_PASSWORD_HASH = 'bcrypt'
     FLASKY_COMMENTS_PER_PAGE  = 5
+    ALLOWED_EXTENSIONS = os.getenv('ALLOWED_EXTENSIONS')
+    UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER') 
 
     @staticmethod
     def init_app(app):

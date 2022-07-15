@@ -22,7 +22,7 @@
 
   </head>
 <body>
-
+{% block navbar %}
 <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
   <div class="collapse navbar-collapse" id="navbarCollapse">
     
@@ -39,7 +39,11 @@
       <li class="nav-item">
         <a class="nav-link active" aria-current="page" href="{{ url_for('calend.show_calendar') }}">Calendar</a>
       </li>
-      </ul>
+
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{ url_for('main.show_items_sale') }}">Merch</a>
+      </li>
+    </ul>
       {% if current_user.is_anonymous %}
       <ul class="navbar-nav ml-auto">
       
@@ -80,23 +84,25 @@
   </div>
 
 </nav>
-
+{% endblock %}
 
       
 
-      <div class="container">
-          
-            <div class="titles_h">  
-              {% block content_title %}
-                
-              {% endblock %}
-            </div>    
-              
-              {% block content %}
-                
-              {% endblock %} 
+  <div class="container">
+      
+        <div class="titles_h">  
+          {% block content_title %}
+            
+          {% endblock %}
+         </div>   
+ 
+
+ {% block content %}
+ 
+ {% endblock %} 
              
-      </div>
+ </div>  
+     
 
       
       
@@ -138,7 +144,7 @@
           <!-- Twitter -->
           <a href="https://twitter.com"><i class="fa fa-twitter" aria-hidden="true"></i></a>
           <!-- Google -->
-          <a href="https://google.com."><i class="fa fa-google"></i></a>
+          <a href="https://google.com"><i class="fa fa-google"></i></a>
           <!-- Linkedin -->
           <a href="https://linkedin.com"><i class="fa fa-linkedin"></i></a>
           <!-- Github -->

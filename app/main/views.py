@@ -1,6 +1,8 @@
+import os
 from distutils.log import error
 from flask import render_template, request, redirect, url_for, flash, make_response, session, current_app
 from werkzeug.urls import url_parse
+from werkzeug.utils import secure_filename
 from flask_login import login_required, login_user, current_user, logout_user
 from . import main
 from .. import db
@@ -80,6 +82,37 @@ def contact():
 #     flash('You were successfully send message !')
 
 
+
+@main.route('/sales', methods=['GET', 'POST'])
+def show_items_sale():
+    return render_template('sales.html') 
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in  current_app.config['ALLOWED_EXTENSIONS']
+
+
+
+@main.route('/upload/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+            return  '{"filename":"%s"}' % filename
+    return redirect(url_for('main.show_items_sale'))
+        
 
 #перегляд повідомлень від користувачів "зв'яжіться з нами"
 @main.route('/contact/message', methods=['GET', 'POST'])
