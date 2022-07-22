@@ -68,6 +68,7 @@ def contact():
 
 
 #Запис в файл повідомлень з форми "contuct_us"
+
 # with open('client.txt', 'a', encoding='utf-8') as f:
 #     text = ' '
 #     count = 0 
@@ -95,24 +96,30 @@ def allowed_file(filename):
 
 
 @main.route('/upload/', methods=['GET', 'POST'])
+@login_required
 def upload_file():
     if request.method == 'POST':
+        
         # check if the post request has the file part
         if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
+            flash('No file part', category='error')
         file = request.files['file']
+      
         # if user does not select file, browser also
         # submit an empty part without filename
         if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
+            flash('No selected file', category='error')
+            
+        if not allowed_file(file.filename) :
+            flash('Chose correct file format(permitted jpg)' , category='error')
+
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-            return  '{"filename":"%s"}' % filename
-    return redirect(url_for('main.show_items_sale'))
+            flash( '{"filename" : "%s"}' % filename, category='success' )
+    return render_template ('upload.html')
         
+
 
 #перегляд повідомлень від користувачів "зв'яжіться з нами"
 @main.route('/contact/message', methods=['GET', 'POST'])

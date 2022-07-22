@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+<br>
+
+{% block content_title %}
+      
+
+{% for category, message in get_flashed_messages(with_categories=True) %}
+<div  class="alert-{{category}}">{{category}}: {{ message }}</div>
+{% endfor %}
+  </div>  
+<br>
+{% endblock %}
+ <br>
+
+
+{% block content %}
+<form method=POST enctype=multipart/form-data  id="contentAddForm" class="pure-form-stacked">
+    <input id='content_name' placeholder='name'/>
+    <select id='selectOptions'>
+    </select>
+    <input type="file"  placeholder="file" name="file">
+    <input type="submit" value="Submit">
+</form>
+
+
+<script>      
+    document.getElementById('file').onchange = function () {
+                var formdata = new FormData(); //FormData object
+                var fileInput = document.getElementById('file');
+                //Iterating through each files selected in fileInput
+                for (i = 0; i < fileInput.files.length; i++) {
+                    //Appending each file to FormData object
+                    formdata.append(fileInput.files[i].name, fileInput.files[i]);
+                }
+    
+                //Creating an XMLHttpRequest and sending
+                var xhr = new XMLHttpRequest();
+                var url = encodeURI('.');
+                xhr.open('POST', url);
+                xhr.send(formdata);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        $('#returnMessage').html(xhr.responseText);
+                    }
+                }
+            }
+</script>
+
+<style>
+
+#footer{
+         margin-top: 600px !important;;
+}
+</style>
+{% endblock %}
