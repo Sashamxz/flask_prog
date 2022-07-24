@@ -291,3 +291,13 @@ class ContactUs(db.Model):
     email = db.Column(db.String(50), unique=True)
     subject = db.Column(db.String(50))
     message = db.Column(db.Text)
+
+
+class MerchItem(db.Model):
+    __tablename__ = 'merch_item'
+    id = db.Column(db.Integer, primary_key=True)
+    created = db.Column(db.DateTime, default=datetime.now)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+    description = db.Column(db.Text , nullable=False)
+    price = db.Column(db.Integer, default=0)
+    active = db.Column(db.Boolean(), default=True)

@@ -1,0 +1,21 @@
+{%extends'base.html'%}
+
+{% block content_title %}
+
+<title>Add item merch</title>
+{%endblock%}
+
+
+{% block content %}
+<div class="container">
+   <h1>Add item</h1>
+
+   <form method="post">
+        <input type="text"class="form-control" name="name" id="name" placeholder="Enter name"><br>
+        <input type="text"class="form-control" name="description" id="description" placeholder="enter description"><br> 
+        <input type="number"class="form-control"name="price"id="price" placeholder="price"><br>
+        <button class="btn btn-success"type="submit">Add</button>
+   </form>
+
+</div>
+{%endblock%}

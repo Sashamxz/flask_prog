@@ -1,5 +1,6 @@
 import os
 from distutils.log import error
+from tkinter.tix import DirSelectBox
 from flask import render_template, request, redirect, url_for, flash, make_response, session, current_app
 from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
@@ -7,7 +8,7 @@ from flask_login import login_required, login_user, current_user, logout_user
 from . import main
 from .. import db
 from .forms import PostForm, CommentForm
-from ..models import Post, Subscribe, User, Comment, Permission, Like , ContactUs
+from ..models import Post, Subscribe, User, Comment, Permission, Like , ContactUs, MerchItem
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -59,12 +60,15 @@ def contact():
     name = request.form.get('name')
     subject = request.form.get('subject')
     message = request.form.get('message')
-    new_contactus = ContactUs(name=name,email=email, subject=subject, message= message)
-    db.session.add(new_contactus)
-    db.session.commit() 
-    flash('You were successfully send message !' , category= 'success')
-
+    if email and message :
+        new_contactus = ContactUs(name=name,email=email, subject=subject, message= message)
+        db.session.add(new_contactus)
+        db.session.commit() 
+        flash('You were successfully send message !' , category= 'success')
+    else:
+        flash('Check your entries !' , category= 'error')
     return render_template('block.html')
+
 
 
 #Запис в файл повідомлень з форми "contuct_us"
@@ -84,17 +88,57 @@ def contact():
 
 
 
+#сторінка з списком товарів для продажу
 @main.route('/sales', methods=['GET', 'POST'])
 def show_items_sale():
-    return render_template('sales.html') 
+    return render_template('sales/sales.html') 
 
 
+
+#Добавити товар для продажу в базу данних
+@main.route('/add-item', methods=['GET', 'POST'])
+def add_item_merch():
+    if request.method == 'POST':
+        name = request.form['name']
+        description = request.form['description']
+        price = request.form['price']
+        item =  MerchItem(name=name, description=description, price=price)
+        try:    
+            db.session.add(item)
+            db.session.commit()
+            flash('You were successfully add item !' , category= 'success')
+
+        except:    
+            flash('Check your entries !' , category= 'error')
+    return render_template ('sales/add_item_merch.html')
+
+
+#Перегляд існуючих товарів з бази данних 
+@main.route('/show-item', methods=['GET'])
+@login_required
+def show_item():
+    if current_user.can(Permission.MODERATE) or current_user.can(Permission.ADMIN):    
+        page = request.args.get('page')
+
+        if page and page.isdigit():
+            page = int(page)
+        else:
+            page = 1
+        
+        items = MerchItem.query.order_by(MerchItem.created.desc())
+        pages = items.paginate(page=page, per_page=5)
+        return render_template('sales/list_items.html', items = items, pages=pages)
+    return render_template('block.html')
+
+
+#Допустимі розширення файлів, які завантажуються на сервер 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in  current_app.config['ALLOWED_EXTENSIONS']
 
 
 
+#Сторінка для завантаження товарів на сервер
 @main.route('/upload/', methods=['GET', 'POST'])
 @login_required
 def upload_file():
@@ -117,12 +161,13 @@ def upload_file():
             filename = secure_filename(file.filename)
             file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
             flash( '{"filename" : "%s"}' % filename, category='success' )
+
     return render_template ('upload.html')
         
 
 
-#перегляд повідомлень від користувачів "зв'яжіться з нами"
-@main.route('/contact/message', methods=['GET', 'POST'])
+#перегляд повідомлень від користувачів  з форми "зв'яжіться з нами"
+@main.route('/contact/message', methods=['GET'])
 @login_required
 def show_contact_msg():
     if current_user.can(Permission.MODERATE) or current_user.can(Permission.ADMIN):
@@ -142,8 +187,7 @@ def show_contact_msg():
     
 
 
-
-# Створення поста
+# Створення поста для блогу
 @main.route('/create-post', methods=['POST', 'GET'])
 @login_required
 def create_post():
@@ -216,7 +260,7 @@ def index():
 
 
 
- #видалення поста по slag
+#видалення поста по slag
 @main.route('/<slug>/delete-post', methods=['POST', 'GET'])
 @login_required
 def delete_post(slug):
@@ -237,8 +281,6 @@ def delete_post(slug):
     return redirect (url_for('main.index'))
 
 
-       
- 
 
 # Видалення коментаря
 @main.route("/delete-comment/<comment_id>")
@@ -300,7 +342,9 @@ def post_detail(slug):
     return render_template('post_d.html', post=post, 
                             comments=comments, page=page, pages=pages, form = form, pagination_lim=pagination_lim)    
 
-        
+
+
+# Вподобати/скасувати вподобання        
 @main.route('/like/<int:post_id>/<action>')
 @login_required
 def like_action(post_id, action):
@@ -321,7 +365,7 @@ def helper():
     return 'this is help page'
 
 
-# Не реалізована функція
+# id  
 @main.route('/user/<int:id>/')
 def user_profile(id):
     return "Profile page of user #{}".format(id)
