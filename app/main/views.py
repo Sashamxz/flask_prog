@@ -88,7 +88,7 @@ def contact():
 
 
 
-#сторінка з списком товарів для продажу
+#сторінка з списком merch товарів для продажу
 @main.route('/sales', methods=['GET', 'POST'])
 def show_items_sale():
     return render_template('sales/sales.html') 

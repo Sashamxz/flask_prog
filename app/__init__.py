@@ -1,6 +1,5 @@
 import logging
-from flask import Flask, request, current_app
-from flask import redirect, url_for, request
+from flask import Flask
 from elasticsearch import Elasticsearch
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
