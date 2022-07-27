@@ -1,4 +1,3 @@
-import logging
 from flask import Flask
 from elasticsearch import Elasticsearch
 from flask_sqlalchemy import SQLAlchemy
@@ -57,7 +56,6 @@ def create_app(config_name):
     app.register_blueprint(api_bp, url_prefix='/api')
 
     # лог
-    app.logger.setLevel(logging.INFO)
     app.logger.info('Flask_proj startup')
     
    
