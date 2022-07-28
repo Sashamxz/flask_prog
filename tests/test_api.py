@@ -28,3 +28,34 @@ def test_404(app):
         json_response = json.loads(response.get_data(as_text=True))
     
         assert(json_response['error'], 'not found')
+
+
+
+def test_token_auth(app):
+    client = app.test_client()
+    r = Role.query.filter_by(name='User').first()
+    assert (r) == None
+    u = User(email='john@example.com', password='1324', confirmed=True,
+                role=r)
+    db.session.add(u)
+    db.session.commit()
+     # перевірка не правильного токена
+    response = client.get(
+        '/api/posts/',
+        headers=get_api_headers('bad-token', ''))
+    assert(response.status_code, 401)
+
+    # get a token
+    response = client.post(
+        '/api/tokens/',
+        headers=get_api_headers('john@example.com', '1234'))
+    assert(response.status_code, 200)
+    json_response = json.loads(response.get_data(as_text=True))
+    assert(json_response.get('token'))
+    token = json_response['token']
+
+    # issue a request with the token
+    response = client.get(
+        '/api/posts/',
+        headers=get_api_headers(token, ''))
+    assert(response.status_code, 200)

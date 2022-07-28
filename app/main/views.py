@@ -113,6 +113,7 @@ def add_item_merch():
     return render_template ('sales/add_item_merch.html')
 
 
+
 #Перегляд існуючих товарів з бази данних 
 @main.route('/show-item', methods=['GET'])
 @login_required

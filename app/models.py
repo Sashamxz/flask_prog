@@ -1,9 +1,9 @@
-from email import message
 import re
 import base64
 import os
 from flask import current_app, request, url_for
 from enum import unique
+from app.exceptions import ValidationError
 from datetime import datetime, timedelta
 from flask_login import UserMixin
 from app import db, login
@@ -225,6 +225,26 @@ class Post(db.Model):
     def generate_slug(self):
         if self.title:
             self.slug = slugify(self.title)
+    
+    def to_json(self):
+        json_post = {
+            'url': url_for('api.get_post', id=self.id),
+            'body': self.body,
+            'body_html': self.body_html,
+            'timestamp': self.timestamp,
+            'author_url': url_for('api.get_user', id=self.author_id),
+            'comments_url': url_for('api.get_post_comments', id=self.id),
+            'comment_count': self.comments.count()
+        }
+        return json_post
+
+
+    @staticmethod
+    def from_json(json_post):
+        body = json_post.get('body')
+        if body is None or body == '':
+            raise ValidationError('post does not have a body')
+        return Post(body=body)  
 
     def __repr__(self):
         return '<Post id: {}, title: {}>'.format(self.id, self.title)
