@@ -10,12 +10,21 @@ from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
+
+
+#create tag ar post
 post_tags = db.Table(
     'post_tags', db.Column(
         'post_id', db.Integer, db.ForeignKey('posts.id')), db.Column(
             'tag_id', db.Integer, db.ForeignKey('tags.id')))
 
 
+@login.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+#premission for users(role_id)
 class Permission:
     FOLLOW = 1
     COMMENT = 2
@@ -24,6 +33,7 @@ class Permission:
     ADMIN = 16
 
 
+########################################################################################
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer(), primary_key=True)
@@ -37,6 +47,7 @@ class Role(db.Model):
         if self.permissions is None:
             self.permissions = 0
 
+    #need run command befor create first user!
     @staticmethod
     def insert_roles():
         roles = {
@@ -76,11 +87,14 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 
+
+#create slug for post
 def slugify(stringg):
     pattern = r'[^\w+]'
     return re.sub(pattern, '-', stringg)
 
 
+########################################################################################
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer(), primary_key=True)
@@ -96,7 +110,13 @@ class User(UserMixin, db.Model):
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
 
-
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        if self.role is None:
+            if self.email == current_app.config['FLASK_ADMIN']:
+                self.role = Role.query.filter_by(name='Administrator').first()
+            if self.role is None:
+                self.role = Role.query.filter_by(default=True).first()
 
     def like_post(self, post):
         if not self.has_liked_post(post):
@@ -114,33 +134,18 @@ class User(UserMixin, db.Model):
             Like.user_id == self.id,
             Like.post_id == post.id).count() > 0
 
-
-    def __init__(self, **kwargs):
-        super(User, self).__init__(**kwargs)
-        if self.role is None:
-            if self.email == current_app.config['FLASK_ADMIN']:
-                self.role = Role.query.filter_by(name='Administrator').first()
-            if self.role is None:
-                self.role = Role.query.filter_by(default=True).first()
-
-
-
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
-
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
-
 
     def is_administrator(self):
         return self.can(Permission.ADMIN)
    
-
     def to_dict(self, include_email=False):
         data = {
             'id': self.id,
@@ -152,16 +157,12 @@ class User(UserMixin, db.Model):
             data['email'] = self.email
         return data
 
-
-
     def from_dict(self, data, new_user=False):
         for field in ['username', 'email']:
             if field in data:
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
-
             self.set_password(data['password'])
-
 
     def get_token(self, expires_in=3600):
         now = datetime.utcnow()
@@ -175,7 +176,6 @@ class User(UserMixin, db.Model):
     def revoke_token(self):
         self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
 
-
     @staticmethod
     def check_token(token):
         user = User.query.filter_by(token=token).first()
@@ -183,21 +183,12 @@ class User(UserMixin, db.Model):
             return None
         return user
 
-
-
-
-
-
-
-
-
-   
     def __repr__(self):
         return '<User: {}>'.format(self.username)
 
 
 
-
+#################################################################################################
 class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
@@ -208,7 +199,6 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     likes = db.relationship('Like', backref='post', passive_deletes=True,  lazy='dynamic')
     comments = db.relationship('Comment', backref='post', lazy='dynamic', passive_deletes=True)
-
 
 
     def __init__(self, *args, **kwargs):
@@ -230,14 +220,13 @@ class Post(db.Model):
         json_post = {
             'url': url_for('api.get_post', id=self.id),
             'body': self.body,
-            'body_html': self.body_html,
-            'timestamp': self.timestamp,
+            'body_html': self.body,
+            'timestamp': self.created,
             'author_url': url_for('api.get_user', id=self.author_id),
-            'comments_url': url_for('api.get_post_comments', id=self.id),
-            'comment_count': self.comments.count()
+            'comment_count': self.comments.count(),
+            'likes': self.likes.count() 
         }
         return json_post
-
 
     @staticmethod
     def from_json(json_post):
@@ -251,7 +240,7 @@ class Post(db.Model):
 
 
 
-
+################################################################################################
 class Tag(db.Model):
     __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
@@ -267,7 +256,7 @@ class Tag(db.Model):
 
 
 
-
+#################################################################################################
 class Subscribe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True)
@@ -275,13 +264,10 @@ class Subscribe(db.Model):
 
 
 
-@login.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
 
 
 
-
+#################################################################################################
 class Comment(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
@@ -293,6 +279,7 @@ class Comment(db.Model):
 
 
 
+##################################################################################################
 class Like(db.Model):
     __tablename__ = 'likes'
     id = db.Column(db.Integer, primary_key=True)
@@ -302,7 +289,7 @@ class Like(db.Model):
 
 
 
-
+##################################################################################################
 class ContactUs(db.Model):
     __tablename__ = 'contuct_us'
     id = db.Column(db.Integer, primary_key=True)
@@ -313,6 +300,8 @@ class ContactUs(db.Model):
     message = db.Column(db.Text)
 
 
+
+##################################################################################################
 class MerchItem(db.Model):
     __tablename__ = 'merch_item'
     id = db.Column(db.Integer, primary_key=True)

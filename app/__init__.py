@@ -24,8 +24,6 @@ login.login_message = ('Please log in to access this page.')
 
 
 
-
-
 def create_app(config_name):
     app = Flask(__name__)
 
@@ -36,16 +34,16 @@ def create_app(config_name):
     migrate.init_app(app, db)
     mail.init_app(app)
     moment.init_app(app)
-
     db.init_app(app)
-
+    
+    #not implemented yet!!!!
     app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
         if app.config['ELASTICSEARCH_URL'] else None
 
     # blueprint
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
-
+    
     from .calend import calend as calend_blueprint
     app.register_blueprint(calend_blueprint, url_prefix='/calendar')
 
@@ -55,13 +53,12 @@ def create_app(config_name):
     from app.api import bp as api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
 
-    # лог
+    # log
     app.logger.info('Flask_proj startup')
-    
-   
-    
 
     return app
+
+
 
 
 from app import models

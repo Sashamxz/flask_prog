@@ -14,8 +14,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 
 
-
-# Обробник підписки на новини
+# news subscription handler
 @main.route('/subscribe', methods=['POST'])
 def subscribe():
     if request.method == 'POST':
@@ -23,19 +22,19 @@ def subscribe():
             sub_cl = request.form.get('email')
             param = None
 
-            # запис тих, хто підписався в файл
+            #a record of those who subscribed to the """file"""
             # with open ('client.txt', 'a', encoding='utf-8') as f:
             #     f.write(f'{sub_cl} \n ' )
             #     flash('You were successfully subscribe !')
 
-            # перевірка наявності підписки
+            # checking for subscription
             if Subscribe.query.filter(Subscribe.email == f'{sub_cl}').all():
                 flash(" You are already subscribed ", category='info')
                 param = True
                 return render_template('block.html', param=param)
 
             try:
-                # Запис в базу данних
+                # recording in the database
                 subscribe_m = Subscribe(email=sub_cl)
                 db.session.add(subscribe_m)
                 db.session.commit()
@@ -53,7 +52,7 @@ def subscribe():
 
 
 
-#обробка форми 'contact_us'
+#handler form 'contact_us' at home page
 @main.route('/contact', methods=['GET', 'POST'])
 def contact():
     email = request.form.get('email')
@@ -71,8 +70,7 @@ def contact():
 
 
 
-#Запис в файл повідомлень з форми "contuct_us"
-
+###writing messages to the """file""" form at home page "contuct_us"
 # with open('client.txt', 'a', encoding='utf-8') as f:
 #     text = ' '
 #     count = 0 
@@ -88,14 +86,14 @@ def contact():
 
 
 
-#сторінка з списком merch товарів для продажу
+#page with a list of merch items for sale
 @main.route('/sales', methods=['GET', 'POST'])
 def show_items_sale():
     return render_template('sales/sales.html') 
 
 
 
-#Добавити товар для продажу в базу данних
+#add a product for sale to the database
 @main.route('/add-item', methods=['GET', 'POST'])
 def add_item_merch():
     if request.method == 'POST':
@@ -114,10 +112,11 @@ def add_item_merch():
 
 
 
-#Перегляд існуючих товарів з бази данних 
+#view existing products from the database
 @main.route('/show-item', methods=['GET'])
 @login_required
 def show_item():
+    #check permission
     if current_user.can(Permission.MODERATE) or current_user.can(Permission.ADMIN):    
         page = request.args.get('page')
 
@@ -132,14 +131,14 @@ def show_item():
     return render_template('block.html')
 
 
-#Допустимі розширення файлів, які завантажуються на сервер 
+
+#file extensions that are uploaded to the server are valid
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in  current_app.config['ALLOWED_EXTENSIONS']
 
 
-
-#Сторінка для завантаження товарів на сервер
+#page for uploading files to the server
 @main.route('/upload/', methods=['GET', 'POST'])
 @login_required
 def upload_file():
@@ -167,12 +166,12 @@ def upload_file():
         
 
 
-#перегляд повідомлень від користувачів  з форми "зв'яжіться з нами"
+#viewing messages from users from the "contact us" form
 @main.route('/contact/message', methods=['GET'])
 @login_required
 def show_contact_msg():
     if current_user.can(Permission.MODERATE) or current_user.can(Permission.ADMIN):
-        page = request.args.get('page')
+        page = request.args.get('page') 
 
         if page and page.isdigit():
             page = int(page)
@@ -180,15 +179,14 @@ def show_contact_msg():
             page = 1
 
         messages = ContactUs.query.order_by(ContactUs.created.desc())
-
-        pages = messages.paginate(page=page, per_page=5)
+        pages = messages.paginate(page=page, per_page=5)  #create pagination page
 
         return render_template('messages_contact.html', messages = messages, pages=pages)
     return render_template('block.html')
     
 
 
-# Створення поста для блогу
+#creating a new blog post
 @main.route('/create-post', methods=['POST', 'GET'])
 @login_required
 def create_post():
@@ -199,7 +197,7 @@ def create_post():
             user_id = current_user.id
             try:
                 post = Post(title=title, body=body, author_id=user_id)
-                db.session.add(post)
+                db.session.add(post) #add post in db
                 db.session.commit()
             except BaseException:
                 print('error db.add 498e238e')
@@ -214,11 +212,11 @@ def create_post():
 
 
 
-# Редагування поста
+#edit post
 @main.route('/<slug>/edit', methods=['POST', 'GET'])
 @login_required
 def edit_post(slug):
-    # перевірка доступу для редагування
+    # check permission
     if current_user.can(Permission.MODERATE):
         post = Post.query.filter(Post.slug == slug).first()
 
@@ -236,10 +234,10 @@ def edit_post(slug):
 
 
 
-# сторінка блога
-@main.route('/blog', methods=['GET', 'POST'])
+#list titles of posts
+@main.route('/blog/posts', methods=['GET', 'POST'])
 def index():
-    # пошук !тільки серед постів!   за допомогою  аргумента "search?q="
+    # search only among posts with "search?q="
     q = request.args.get('q')
 
     page = request.args.get('page')
@@ -261,11 +259,11 @@ def index():
 
 
 
-#видалення поста по slag
+#removal post by slag
 @main.route('/<slug>/delete-post', methods=['POST', 'GET'])
 @login_required
 def delete_post(slug):
-    # перевірка доступу для видалення
+    # check permission
     if current_user.can(Permission.MODERATE) or current_user.can(Permission.ADMIN):
         post = Post.query.filter(Post.slug == slug).first()
         if not post:
@@ -283,7 +281,7 @@ def delete_post(slug):
 
 
 
-# Видалення коментаря
+# delete comment by id
 @main.route("/delete-comment/<comment_id>")
 @login_required
 def delete_comment(comment_id):
@@ -303,7 +301,7 @@ def delete_comment(comment_id):
 
 
 
-# Головна сторніка новин
+# home page 
 @main.route('/', methods=['GET', 'POST'])
 @main.route('/home', methods=['GET', 'POST'])
 def home_view():
@@ -312,8 +310,8 @@ def home_view():
 
 
 
-# Детальна інформація про пост з коментарями
-@main.route('/<slug>/', methods=['GET', 'POST'])
+#detailed information about the post with comments
+@main.route('/post/<slug>/', methods=['GET', 'POST'])
 def post_detail(slug):
     post_id = Post.query.filter(Post.slug == slug).first().id
     post = Post.query.filter_by(id=post_id).first()
@@ -322,7 +320,7 @@ def post_detail(slug):
 
     if form.validate_on_submit():
         if post:
-            # запис коментаря в базу данних
+            # add comment in database
            
             comment = Comment(
                 body=form.body.data, author=current_user._get_current_object(), post=post,)
@@ -345,7 +343,7 @@ def post_detail(slug):
 
 
 
-# Вподобати/скасувати вподобання        
+# like/ulike post      
 @main.route('/like/<int:post_id>/<action>')
 @login_required
 def like_action(post_id, action):
@@ -359,14 +357,14 @@ def like_action(post_id, action):
     return redirect(request.referrer)
 
 
-# Допоміжна сторінка
+# help page
 @main.route('/help')
 def helper():
     print(current_user)
     return 'this is help page'
 
 
-# id  
+# user id  
 @main.route('/user/<int:id>/')
 def user_profile(id):
     return "Profile page of user #{}".format(id)

@@ -14,8 +14,6 @@ def test_contactmodel_save(app):
         assert contact.can(Permission.MODERATE) == False
 
 
-
-
 def test_register_and_login(app):
     # register a new account
     client = app.test_client()
@@ -25,7 +23,6 @@ def test_register_and_login(app):
         'password': '1234',
         'password2': '1234'
     })
-
     assert(response.status_code, 302)
 
     # login with the new account
@@ -33,9 +30,10 @@ def test_register_and_login(app):
         'email': 'john@example.com',
         'password': '1324'
     }, follow_redirects=True)
-    
     assert (response.status_code, 200)
-    
+
+
+
 def test_home_page(app):
      client = app.test_client()
      response = client.get('/')

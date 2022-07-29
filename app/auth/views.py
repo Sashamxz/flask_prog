@@ -8,7 +8,7 @@ from .forms import LoginForm, RegistrationForm
 
 
 
-
+#login form handler 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -25,7 +25,7 @@ def login():
     return render_template('auth/login.html', form=form)
 
 
-
+#logout
 @auth.route('/logout')
 @login_required
 def logout():
@@ -34,7 +34,7 @@ def logout():
     return redirect(url_for('main.index'))
 
 
-
+#register form handler 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()

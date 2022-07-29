@@ -36,6 +36,8 @@ Routs:
 
 Api:
 /api/users/<int:id> - json інформація про користувача
-/api//users - реєстрація користувача
+/api/users - реєстрація користувача
 /api/tokens (post) -отримати тимчасовий токен 
 /api/tokens (delete) - закриття токена
+/api/posts/ cписок усіх посітв у форматі json
+/api/posts/<int:id> детальна інформація про пост у форміт json

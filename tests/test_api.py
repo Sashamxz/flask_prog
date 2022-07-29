@@ -6,7 +6,6 @@ from app.models import User, Role, Post, Comment
 
 
 
-
 def get_api_headers(username, password):
   return {
         'Authorization': 'Basic ' + b64encode(
@@ -14,7 +13,6 @@ def get_api_headers(username, password):
         'Accept': 'application/json',
         'Content-Type': 'application/json'
     }
-
 
 
 def test_404(app):
