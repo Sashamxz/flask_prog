@@ -1,21 +1,21 @@
 from flask import url_for, jsonify, request, abort
 from app import db
-from app.models import User
-from . import bp
+from ..models import User
+from . import api
 from app.api.errors import bad_request
 from app.api.auth import token_auth
 
 
 
 
-@bp.route('/users/<int:id>', methods=['GET'])
+@api.route('/users/<int:id>', methods=['GET'])
 @token_auth.login_required
 def get_user(id):
     return jsonify(User.query.get_or_404(id).to_dict())
 
 
 
-@bp.route('/users', methods=['POST'])
+@api.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json() or {}
     if 'username' not in data or 'email' not in data or 'password' not in data:

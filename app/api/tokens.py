@@ -1,10 +1,10 @@
 from flask import jsonify
 from app import db
-from app.api import bp
+from app.api import api
 from app.api.auth import basic_auth, token_auth
 
 
-@bp.route('/tokens', methods=['POST'])
+@api.route('/tokens/', methods=['POST'])
 @basic_auth.login_required
 def get_token():
     token = basic_auth.current_user().get_token()
@@ -12,7 +12,7 @@ def get_token():
     return jsonify({'token': token})
 
 
-@bp.route('/tokens', methods=['DELETE'])
+@api.route('/tokens/', methods=['DELETE'])
 @token_auth.login_required
 def revoke_token():
     token_auth.current_user().revoke_token()

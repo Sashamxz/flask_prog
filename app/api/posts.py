@@ -2,18 +2,16 @@ from flask import jsonify, request, g, url_for, session
 from flask_login import current_user
 from .. import db
 from app.models import Post, Permission
-from . import bp
+from . import api
 from .errors import forbidden
 
 
+# @bp.before_request
+# def before_request():
+#     g.user = current_user
 
 
-@bp.before_request
-def before_request():
-    g.user = current_user
-
-
-@bp.route('/posts/')
+@api.route('/posts/')
 def get_posts():
     page = request.args.get('page', 1, type=int)
     pagination = Post.query.paginate(
@@ -34,7 +32,7 @@ def get_posts():
     })
 
 
-@bp.route('/posts/<int:id>')
+@api.route('/posts/<int:id>')
 def get_post(id):
     post = Post.query.get_or_404(id)
     return jsonify(post.to_json())
@@ -43,16 +41,15 @@ def get_post(id):
 # @bp.route('/posts/', methods=['POST'])
 # def new_post():
 #     if  session.new:
-#         return forbidden('Insufficient permissions') 
-    
-#     else:    
+#         return forbidden('Insufficient permissions')
+
+#     else:
 #         post = Post.from_json(request.json)
 #         post.author = g.current_user
 #         db.session.add(post)
 #         db.session.commit()
 #         return jsonify(post.to_json()), 201, \
 #             {'Location': url_for('api.get_post', id=post.id)}
-
 
 
 # @bp.route('/posts/<int:id>', methods=['PUT'])

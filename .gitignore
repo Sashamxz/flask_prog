@@ -1,3 +1,5 @@
+.env_docker
+
 *.log
 *.py[cod]
 *$py.class
