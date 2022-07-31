@@ -58,3 +58,9 @@ def test_token_auth(app):
             '/api/posts/',
             headers=get_api_headers(token, ''))
         assert response.status_code == 200
+
+def test_db(app):
+    with app.app_context():
+        db.session.remove()
+        db.drop_all()
+       

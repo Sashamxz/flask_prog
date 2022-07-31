@@ -1,4 +1,4 @@
-#NOT IMPTENDET YET
+#NOT implemented  yet
 
 
 # from threading import Thread

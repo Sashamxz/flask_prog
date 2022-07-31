@@ -14,8 +14,6 @@
       
     } 
     
-   
-  
     h2, p1{
       font-family: monospace;
       font-weight: lighter;
@@ -23,15 +21,14 @@
     }
 
     h2 {
-      
       font-size: 20px;
       text-align: center;
-      
     }
+
     h4 {  
             margin-bottom: 10px;
-          
              }
+
     p1 {
       font-size: 20px;
       position: relative;
@@ -48,17 +45,17 @@
     .text-center{
      margin-left:10px;
      margin-top:10px;
-
     }
-  </style>
+
+</style>
+
+
 
     <div class="conteiner"> 
       <div class="center">
           <h2>Time befor start</h1>
           <hr>
           <p1 id="timer"></p1>
-          
-        
           
           <script>
           // Set the date we're counting down to
@@ -97,31 +94,20 @@
       
       <div class="subscribe">
         <style type="text/css">
-          
         </style>
 
-        <h4>Subscribe now to get the latest updates!</h4>
-        <form id="subscribe"  action="/subscribe" method="POST">
+          <h4>Subscribe now to get the latest updates!</h4>
+          <form id="subscribe"  action="/subscribe" method="POST">
           <div class="subscribe-form"  method="POST" >
             
             {% if not  param %}
             <input type="email" name="email">
-
             <input  type="submit" href="{{ url_for('main.subscribe') }}" value="Subscribe">
-            
-            
-            
             {% endif %}  
-
-            
-          
+           </div>
+           </form>
           </div>
-         
 
-      </div>
-
-        </form>
-      
       </div>
 
       
@@ -143,9 +129,8 @@
    </div> 
    
 
-  <main id="main">
 
-  
+  <main id="main">
     <!-- ======= Contact Us Section ======= -->
     <section id="contact" class="contact">
       <div class="container">
@@ -182,8 +167,8 @@
                 </div>
 
                 
-              </div>
-            </div>
+               </div>
+             </div>
 
           </div>
 
@@ -219,11 +204,8 @@
   </main><!-- End #main -->
 
  
-      </div>
-   
-    </div>
-  
-</div>
+      
+
 </body>
 
 

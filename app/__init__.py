@@ -10,7 +10,6 @@ from config import config
 
 
 
-
 bootstrap = Bootstrap()
 db = SQLAlchemy()
 mail = Mail()
@@ -19,8 +18,6 @@ login = LoginManager()
 moment = Moment()
 login.login_view = 'auth.login'
 login.login_message = ('Please log in to access this page.')
-
-
 
 
 

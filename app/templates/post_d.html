@@ -8,6 +8,7 @@
 
 {% endblock %}
 
+
 {% block content_title %}
 <!--заголовок поста + кнопка видалення поста , для користувачів з рівнем доступу Модератор і вище -->
     <div id="title_p">   
@@ -39,7 +40,6 @@
 
 
 {% block content %}
-
    
     <div id="text_post"> 
       <style>
@@ -50,18 +50,14 @@
           background: white; }  
       </style>
  
- 
      <!--тіло поста  -->
       {{ post.body }} 
 
     </div>
-
     <div class="comment-form">
       {{ wtf.quick_form(form) }}
     </div>
-    
     <h4 id="comments">Comments:</h4>
-  
     <br>
     
     
@@ -104,26 +100,15 @@
                 class="dropdown-item">Delete</a>
                 <br>  
             </li>
-           
           </ul>
           
-          
-
-        
         </div>
 
         <br> 
-
       {% endfor %}
-      
         <br>
       
   
-
-   
- 
-    
-
 
           {% if post.comments.count() > 0 %}
       

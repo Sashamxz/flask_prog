@@ -1,16 +1,20 @@
 {% extends 'base.html' %}
 
+
+
 {% block title %}
   
     Create new post
 
 {% endblock %}
 
+
 {% block content_title %}
      
     <h4>New post</h4>
         
 {% endblock %}    
+
 
 {% block content %}
    
@@ -22,7 +26,6 @@
                 #body {
                     width:  630px;
                     height: 400px;
-                    
                 }
                 </style>
            
@@ -30,16 +33,12 @@
 
                  <br> 
                 {{ field.label(class = 'control-label') }}
-              
                 {{ field(class = 'form-control') }}
             
             </div>    
             {% endfor %}   
-            
             <br>
             <button type="submit" class="btn btn-success">Create</button>
-
-
 
         </form>     
     </div>

@@ -1,15 +1,22 @@
 {% extends 'base.html' %}
 
+
+
 {% block title %}
      Page not found
 {% endblock %}
 
+
+
 {% block content_title %}
 
-        
 {% endblock %}    
 
+
+
+
 {% block content %}
+
 <style>
 .centered {
      position: absolute;
@@ -22,13 +29,8 @@
 
 <div class="container">
     <img src={{ url_for('static', filename='404.png') }} alt='' width="100%" > 
-    <div  class="centered" >Страница не найдена, вернуться на <a href="/">главную</a> страницу. </div>	
+    <div  class="centered" >Page not found, return at <a href="/">main</a> page. </div>	
 </div>
-
-
-
-
-
 
 {% endblock %}
 

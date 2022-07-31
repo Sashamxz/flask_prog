@@ -12,7 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 
-#create tag ar post
+#create tag for post
 post_tags = db.Table(
     'post_tags', db.Column(
         'post_id', db.Integer, db.ForeignKey('posts.id')), db.Column(

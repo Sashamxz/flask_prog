@@ -1,16 +1,19 @@
 {% extends 'base.html' %}
 
+
 {% block title %}
   
     Edit post
 
 {% endblock %}
 
+
 {% block content_title %}
      
     Edit post
         
 {% endblock %}    
+
 
 {% block content %}
    
@@ -25,13 +28,15 @@
                     
                 }
                 </style>
+
             <div class="form-group">
                 
                 {{ field.label(class = 'control-label') }}
                 {{ field(class = 'form-control') }}
                <br>
+            
             </div>    
-            {% endfor %}   
+           {% endfor %}   
             
             
             <button type="submit" class="btn btn-success">Edit</button>
@@ -42,6 +47,7 @@
                 
               
 
-        </form>     
-    </div>
+             </form>     
+        </div>
+
 {% endblock %}
