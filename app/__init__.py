@@ -34,21 +34,25 @@ def create_app(config_name):
     db.init_app(app)
     
     #not implemented yet!!!!
-    app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
-        if app.config['ELASTICSEARCH_URL'] else None
+    #app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
+       # if app.config['ELASTICSEARCH_URL'] else None
 
     # blueprint
-    from .main import main as main_blueprint
+    from app.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
     
-    from .calend import calend as calend_blueprint
+    from app.calend import calend as calend_blueprint
     app.register_blueprint(calend_blueprint, url_prefix='/calendar')
 
-    from .auth import auth as auth_bp
+    from app.auth import auth as auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
 
     from app.api import api as api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
+    
+    from app.sale import sale as sale_bp
+    app.register_blueprint(sale_bp, url_prefix='/sale')
+
 
     # log
     app.logger.info('Flask_proj startup')

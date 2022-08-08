@@ -33,7 +33,7 @@ class Permission:
     ADMIN = 16
 
 
-########################################################################################
+###################################################
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer(), primary_key=True)
@@ -94,7 +94,7 @@ def slugify(stringg):
     return re.sub(pattern, '-', stringg)
 
 
-########################################################################################
+#############################################
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer(), primary_key=True)
@@ -188,7 +188,7 @@ class User(UserMixin, db.Model):
 
 
 
-#################################################################################################
+#################################################
 class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
@@ -240,7 +240,7 @@ class Post(db.Model):
 
 
 
-################################################################################################
+#########################################################
 class Tag(db.Model):
     __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
@@ -256,7 +256,7 @@ class Tag(db.Model):
 
 
 
-#################################################################################################
+##############################################
 class Subscribe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True)
@@ -267,7 +267,7 @@ class Subscribe(db.Model):
 
 
 
-#################################################################################################
+###############################################
 class Comment(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
@@ -279,7 +279,7 @@ class Comment(db.Model):
 
 
 
-##################################################################################################
+################################################
 class Like(db.Model):
     __tablename__ = 'likes'
     id = db.Column(db.Integer, primary_key=True)
@@ -289,7 +289,7 @@ class Like(db.Model):
 
 
 
-##################################################################################################
+################################################
 class ContactUs(db.Model):
     __tablename__ = 'contuct_us'
     id = db.Column(db.Integer, primary_key=True)
@@ -301,7 +301,7 @@ class ContactUs(db.Model):
 
 
 
-##################################################################################################
+##################################################
 class MerchItem(db.Model):
     __tablename__ = 'merch_item'
     id = db.Column(db.Integer, primary_key=True)

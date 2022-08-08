@@ -54,20 +54,21 @@
       {{ post.body }} 
 
     </div>
+
+    {%if current_user.is_authenticated and  current_user.can(Permission.COMMENT)%}
     <div class="comment-form">
       {{ wtf.quick_form(form) }}
     </div>
+    {%endif%}
+    
     <h4 id="comments">Comments:</h4>
     <br>
-    
-    
          
       {% for comment in pages.items %}
       <!--відображення коментарів -->
       <ul class="comment">
         <div class="comment-content">
         <div class="comment-author">{{ comment.author.username }}</div><div class="comment-date">{{ comment.timestamp.strftime("%d/%m/%y %I:%M:%S")  }}</div>
-        
         <div class="comment-body">{{comment.body}}</div>
     
         </div>
@@ -84,8 +85,7 @@
             <li>
               <br>
               
-              <style>
-
+          <style>
                 #del_buttn{
                   min-width: 6rem;
                   line-height: 0.8;
@@ -94,7 +94,7 @@
                 #button_del{
                   line-height: 0.8;
                  }  
-              </style>
+         </style>
            
               <a  href="/delete-comment/{{comment.id}}"
                 class="dropdown-item">Delete</a>
