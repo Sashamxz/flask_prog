@@ -64,24 +64,30 @@ img {
             
         </div>
     </div>
+
+
     <div class="col-md-8 products">
+        
         <div class="row">
+            {% for item in pages.items %}
             <div class="col-sm-4">
+                
                 <div class="product">
                     <div class="product-img">
                         <a href="#"><img src={{ url_for('static', filename='t-shirts.jpg') }} alt=""></a>
                     </div>
                     <p class="product-title">
-                        <a href="#">T-shirt</a>
+                        <a href="#">{{item.name}}</a>
                     </p>
-                    <p class="product-desc">Signature NYX cosmetics</p>
-                    <p class="product-price">Price: €10.00</p>
+                    <p class="product-desc">{{item.description}}</p>
+                    <p class="product-price">{{item.price}} $ </p>
                 </div>
+                
             </div>
+            {% endfor %}
+           
 
-
-
-            <div class="col-sm-4">
+            <!-- <div class="col-sm-4">
                 <div class="product">
                     <div class="product-img">
                         <a href="#"><img src={{ url_for('static', filename='t-shirts.jpg') }} alt=""></a>
@@ -143,7 +149,7 @@ img {
                     <p class="product-desc">Signature NYX cosmetics</p>
                     <p class="product-price">Price: €10.00</p>
                 </div>
-            </div>   
+            </div>    -->
 
         </div>
     
