@@ -20,9 +20,18 @@ class Config:
     SECURITY_PASSWORD_SALT = os.getenv('SALT')
     SECURITY_PASSWORD_HASH = 'bcrypt'
     FLASKY_COMMENTS_PER_PAGE  = 5
+    MAIL_SERVER = os.getenv('MAIL_SERVER')
+    MAIL_PORT = int(os.getenv('MAIL_PORT') or 25)
+    MAIL_USE_TLS = os.getenv('MAIL_USE_TLS') is not None
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+    ADMINS = ['sasha.oom7@gmail.com']
+    
+    
     ALLOWED_EXTENSIONS = os.getenv('ALLOWED_EXTENSIONS')
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER') 
-
+    REDIS_URL = os.getenv('REDIS_URL') or 'redis://'
+    
     @staticmethod
     def init_app(app):
         pass
@@ -37,7 +46,7 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
+    SQLALCHEMY_DATABASE_URI = os.getenv('TEST_DATABASE_URL') or \
         'sqlite://'
     WTF_CSRF_ENABLED = False
 

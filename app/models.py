@@ -1,6 +1,8 @@
 import re
 import base64
 import os
+import rq 
+import redis
 from flask import current_app, request, url_for
 from enum import unique
 from app.exceptions import ValidationError
@@ -109,7 +111,9 @@ class User(UserMixin, db.Model):
     liked = db.relationship('Like', foreign_keys='Like.user_id', backref='user', passive_deletes=True)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
-
+    tasks = db.relationship('Task', backref='user', lazy='dynamic')
+    
+    
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         if self.role is None:
@@ -182,6 +186,24 @@ class User(UserMixin, db.Model):
         if user is None or user.token_expiration < datetime.utcnow():
             return None
         return user
+ 
+    #tasks
+    def launch_task(self, name, description, *args, **kwargs):
+        rq_job = current_app.task_queue.enqueue('app.tasks.' + name, self.id,
+                                                *args, **kwargs)
+        task = Task(id=rq_job.get_id(), name=name, description=description,
+                    user=self)
+        db.session.add(task)
+        return task
+
+    def get_tasks_in_progress(self):
+        return Task.query.filter_by(user=self, complete=False).all()
+
+    def get_task_in_progress(self, name):
+        return Task.query.filter_by(name=name, user=self,
+                                    complete=False).first()
+
+
 
     def __repr__(self):
         return '<User: {}>'.format(self.username)
@@ -253,6 +275,29 @@ class Tag(db.Model):
 
     def __repr__(self):
         return '{}'.format(self.name)
+
+
+
+
+class Task(db.Model):
+    __tablename__= 'tasks'
+    id = db.Column(db.String(36), primary_key=True)
+    name = db.Column(db.String(128), index=True)
+    description = db.Column(db.String(128))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    complete = db.Column(db.Boolean, default=False)
+
+    def get_rq_job(self):
+        try:
+            rq_job = rq.job.Job.fetch(self.id, connection=current_app.redis)
+        except (redis.exceptions.RedisError, rq.exceptions.NoSuchJobError):
+            return None
+        return rq_job
+
+    def get_progress(self):
+        job = self.get_rq_job()
+        return job.meta.get('progress', 0) if job is not None else 100
+
 
 
 

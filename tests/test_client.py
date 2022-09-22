@@ -1,3 +1,4 @@
+
 from app import db
 from app.models import  Post, Subscribe, User, Comment, Permission, Like , ContactUs, Role
 
@@ -42,6 +43,14 @@ def test_home_page(app):
      response = client.get('/')
      assert response.status_code == 200
 
+
+def test_export_posts(app):
+    with app.app_context():
+        contact = User(username="Johffn", email="zontick99@gmail.com",)  
+        contact.launch_task('export_posts', ('Exporting posts...'))
+        
+        db.session.commit()
+        assert contact.tasks != None 
 
 def test_db(app):
     with app.app_context():
