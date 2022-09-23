@@ -1,4 +1,5 @@
 import os
+from pickle import FALSE
 from dotenv import load_dotenv
 
 
@@ -21,13 +22,11 @@ class Config:
     SECURITY_PASSWORD_HASH = 'bcrypt'
     FLASKY_COMMENTS_PER_PAGE  = 5
     MAIL_SERVER = os.getenv('MAIL_SERVER')
-    MAIL_PORT = int(os.getenv('MAIL_PORT') or 25)
-    MAIL_USE_TLS = os.getenv('MAIL_USE_TLS') is not None
+    MAIL_PORT = int(os.getenv('MAIL_PORT'))
+    MAIL_USE_TLS = 1
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
-    ADMINS = ['sasha.oom7@gmail.com']
-    
-    
+    ADMINS = ['zontick99@gmail.com']
     ALLOWED_EXTENSIONS = os.getenv('ALLOWED_EXTENSIONS')
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER') 
     REDIS_URL = os.getenv('REDIS_URL') or 'redis://'
@@ -39,7 +38,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    
+    MAIL_SUPPRESS_SEND = False
     SQLALCHEMY_DATABASE_URI = os.getenv('DEV_DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')
 
