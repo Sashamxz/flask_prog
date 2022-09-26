@@ -3,6 +3,8 @@ import base64
 import os
 import rq 
 import redis
+import json
+from time import time
 from flask import current_app, request, url_for
 from enum import unique
 from app.exceptions import ValidationError
@@ -112,7 +114,8 @@ class User(UserMixin, db.Model):
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
     tasks = db.relationship('Task', backref='user', lazy='dynamic')
-    
+    notifications = db.relationship('Notification', backref='user',
+                                    lazy='dynamic')
     
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -188,6 +191,13 @@ class User(UserMixin, db.Model):
         return user
  
     #tasks
+
+    def add_notification(self, name, data):
+        self.notifications.filter_by(name=name).delete()
+        n = Notification(name=name, payload_json=json.dumps(data), user=self)
+        db.session.add(n)
+        return n
+
     def launch_task(self, name, description, *args, **kwargs):
         rq_job = current_app.task_queue.enqueue('app.tasks.' + name, self.id,
                                                 *args, **kwargs)
@@ -301,8 +311,24 @@ class Task(db.Model):
 
 
 
+
+class Notification(db.Model):
+    __tablename__= 'notifications'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    timestamp = db.Column(db.Float, index=True, default=time)
+    payload_json = db.Column(db.Text)
+
+    def get_data(self):
+        return json.loads(str(self.payload_json))
+
+
+
+
 #Subscribe get news in a home page 
 class Subscribe(db.Model):
+    __tablename__= 'sabscribe'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True)
     time = db.Column(db.DateTime, default=datetime.now)

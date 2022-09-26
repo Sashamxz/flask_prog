@@ -7,7 +7,7 @@ from app import create_app, db
 from app.models import User, Post, Task
 from app.email import send_email
 
-app = create_app()
+app = create_app('development')
 app.app_context().push()
 
 
