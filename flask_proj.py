@@ -5,7 +5,7 @@ from flask_migrate import Migrate, upgrade
 from flask_script import Manager
 from app import create_app, db
 from dotenv import load_dotenv
-from app.models import User,  Role, Permission, Post, Comment, Like
+from app.models import Task, User,  Role, Permission, Post, Comment, Like, Notification, Task
 
 
 
@@ -21,8 +21,8 @@ manager = Manager(app)
 
 @app.shell_context_processor
 def make_shell_context():
-    return {db: db, User: User, Post: Post, Comment: Comment,
-     Like: Like, Role:Role, Permission:Permission,}
+    return {'db': db, 'User': User, 'Post': Post, 'Comment': Comment,
+     'Like': Like, 'Role':Role, 'Permission':Permission, 'Notification': Notification, 'Task': Task}
 
 
 @app.cli.command()
@@ -36,5 +36,5 @@ def deploy():
 
    
 
-if __name__ == '__main__':
-    app.run(host="127.0.0.1", port='5000')
+# if __name__ == '__main__':
+#     app.run(host="127.0.0.1", port='5000')
