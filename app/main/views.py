@@ -1,6 +1,5 @@
 import os
 from distutils.log import error
-from tkinter.tix import DirSelectBox
 from flask import render_template, request, redirect, url_for, flash, make_response, session, current_app
 from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
