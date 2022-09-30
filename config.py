@@ -55,6 +55,14 @@ class ProductionConfig(Config):
     pass
 
 
+class HerokuConfig(ProductionConfig):
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', '').replace(
+        'postgres://', 'postgresql://') or \
+        'sqlite:///' + os.path.join(basedir, 'app.db')
+
+
+
 class DockerConfig(Config):
     
     SQLALCHEMY_DATABASE_URI = os.getenv('DOCKER_DATABASE_URL')
@@ -77,4 +85,5 @@ config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
-    'docker': DockerConfig,}
+    'docker': DockerConfig,
+    'heroku': HerokuConfig }
