@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import click
 from flask_migrate import Migrate, upgrade
 from flask_script import Manager
 from app import create_app, db
@@ -16,7 +17,7 @@ if os.path.exists(dotenv_path):
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 migrate = Migrate(app, db)
-manager = Manager(app)
+
 
 
 @app.shell_context_processor
@@ -36,5 +37,3 @@ def deploy():
 
    
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port='33507')
