@@ -3,7 +3,6 @@
 import os
 import click
 from flask_migrate import Migrate, upgrade
-from flask_script import Manager
 from app import create_app, db
 from dotenv import load_dotenv
 from app.models import Task, User,  Role, Permission, Post, Comment, Like, Notification, Task
@@ -27,7 +26,7 @@ def make_shell_context():
 
 
 @app.cli.command('deploy')
-def deploy():
+def deploy_app():
     """Run deployment tasks."""
     # migrate database to latest revision
     upgrade()
