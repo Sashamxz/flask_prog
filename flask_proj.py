@@ -26,7 +26,7 @@ def make_shell_context():
      'Like': Like, 'Role':Role, 'Permission':Permission, 'Notification': Notification, 'Task': Task}
 
 
-@app.cli.command()
+@app.cli.command('deploy')
 def deploy():
     """Run deployment tasks."""
     # migrate database to latest revision
