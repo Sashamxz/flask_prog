@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import click
 from flask_migrate import Migrate, upgrade
 from app import create_app, db
 from dotenv import load_dotenv
@@ -25,8 +24,9 @@ def make_shell_context():
      Like=Like, Rol=Role, Permissio=Permission, Notification=Notification, Task=Task)
 
 
-@app.cli.command()
-def deploy():
+
+@app.cli.command("deploy")
+def deploy_app():
     """Run deployment tasks."""
     # migrate database to latest revision
     upgrade()
@@ -35,4 +35,3 @@ def deploy():
     Role.insert_roles()
 
    
-

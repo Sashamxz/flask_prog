@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: e34230dffbfc
+Revision ID: 73da342c409d
 Revises: 
-Create Date: 2022-06-24 12:46:44.423763
+Create Date: 2022-10-01 20:20:05.993735
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e34230dffbfc'
+revision = '73da342c409d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,6 +28,16 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
+    op.create_table('merch_item',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('created', sa.DateTime(), nullable=True),
+    sa.Column('name', sa.String(length=50), nullable=False),
+    sa.Column('description', sa.Text(), nullable=False),
+    sa.Column('price', sa.Integer(), nullable=True),
+    sa.Column('active', sa.Boolean(), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
+    )
     op.create_table('roles',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=True),
@@ -37,7 +47,7 @@ def upgrade():
     sa.UniqueConstraint('name')
     )
     op.create_index(op.f('ix_roles_default'), 'roles', ['default'], unique=False)
-    op.create_table('subscribe',
+    op.create_table('sabscribe',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=64), nullable=True),
     sa.Column('time', sa.DateTime(), nullable=True),
@@ -68,6 +78,17 @@ def upgrade():
     op.create_index(op.f('ix_users_active'), 'users', ['active'], unique=False)
     op.create_index(op.f('ix_users_token'), 'users', ['token'], unique=True)
     op.create_index(op.f('ix_users_username'), 'users', ['username'], unique=True)
+    op.create_table('notifications',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=128), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('timestamp', sa.Float(), nullable=True),
+    sa.Column('payload_json', sa.Text(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_notifications_name'), 'notifications', ['name'], unique=False)
+    op.create_index(op.f('ix_notifications_timestamp'), 'notifications', ['timestamp'], unique=False)
     op.create_table('posts',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=140), nullable=True),
@@ -79,15 +100,25 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('slug')
     )
+    op.create_table('tasks',
+    sa.Column('id', sa.String(length=36), nullable=False),
+    sa.Column('name', sa.String(length=128), nullable=True),
+    sa.Column('description', sa.String(length=128), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('complete', sa.Boolean(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_tasks_name'), 'tasks', ['name'], unique=False)
     op.create_table('comments',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('body', sa.Text(), nullable=True),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
     sa.Column('disabled', sa.Boolean(), nullable=True),
     sa.Column('author_id', sa.Integer(), nullable=False),
-    sa.Column('post_id', sa.Integer(), nullable=True),
+    sa.Column('post_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['author_id'], ['users.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['post_id'], ['posts.id'], ),
+    sa.ForeignKeyConstraint(['post_id'], ['posts.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_comments_timestamp'), 'comments', ['timestamp'], unique=False)
@@ -115,14 +146,20 @@ def downgrade():
     op.drop_table('likes')
     op.drop_index(op.f('ix_comments_timestamp'), table_name='comments')
     op.drop_table('comments')
+    op.drop_index(op.f('ix_tasks_name'), table_name='tasks')
+    op.drop_table('tasks')
     op.drop_table('posts')
+    op.drop_index(op.f('ix_notifications_timestamp'), table_name='notifications')
+    op.drop_index(op.f('ix_notifications_name'), table_name='notifications')
+    op.drop_table('notifications')
     op.drop_index(op.f('ix_users_username'), table_name='users')
     op.drop_index(op.f('ix_users_token'), table_name='users')
     op.drop_index(op.f('ix_users_active'), table_name='users')
     op.drop_table('users')
     op.drop_table('tags')
-    op.drop_table('subscribe')
+    op.drop_table('sabscribe')
     op.drop_index(op.f('ix_roles_default'), table_name='roles')
     op.drop_table('roles')
+    op.drop_table('merch_item')
     op.drop_table('contuct_us')
     # ### end Alembic commands ###
