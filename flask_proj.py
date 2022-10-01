@@ -21,12 +21,12 @@ migrate = Migrate(app, db)
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User, 'Post': Post, 'Comment': Comment,
-     'Like': Like, 'Role':Role, 'Permission':Permission, 'Notification': Notification, 'Task': Task}
+    return dict(db= db, User=User, Post=Post, Comment=Comment,
+     Like=Like, Rol=Role, Permissio=Permission, Notification=Notification, Task=Task)
 
 
-@app.cli.command('deploy')
-def deploy_app():
+@app.cli.command()
+def deploy():
     """Run deployment tasks."""
     # migrate database to latest revision
     upgrade()
