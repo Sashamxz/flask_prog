@@ -12,7 +12,6 @@ basedir = os.path.join(os.path.dirname(__file__))
 
 
 class Config:
-    DEBUG = True
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ELASTICSEARCH_URL = os.getenv('ELASTICSEARCH_URL')
