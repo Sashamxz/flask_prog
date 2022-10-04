@@ -60,3 +60,20 @@ def show_item():
         pages = items.paginate(page=page, per_page=5)
         return render_template('sales/list_items.html', items = items, pages=pages)
     return render_template('block.html')
+
+
+
+
+@sale.route('/item/<item_id>', methods=['GET'])
+@login_required
+def item_detail(item_id):
+    item  = MerchItem.query.filter_by(id=item_id).first()
+    return render_template('sales/item_detail.html', item=item)
+
+
+
+
+@sale.route('<id>/buy', methods=['GET'])
+@login_required
+def buy_merch_item(item_id):
+    item  = MerchItem.query.filter_by(id=item_id).first()

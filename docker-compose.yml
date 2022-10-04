@@ -13,6 +13,28 @@ services:
       - 5432:5432  
     restart: always
 
+  redis:
+    image: redis
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+  # worker:
+  #   image:  flask_proj:latest worker
+  #   depends_on:
+  #     - redis
+  #   command: rq worker --name worker --url redis://redis:6379/0
+
+  # dashboard:
+  #   image: flask_proj
+  #   ports:
+  #     - 5555:5555
+  #   depends_on:
+  #     - redis
+
+  #   command: rq-dashboard --port 5555 --redis-url redis://redis:6379/0
+  
+  
   flask-proj:
     build: .
     ports:
@@ -22,10 +44,11 @@ services:
     restart: always
     depends_on:
       - db
-       
+      - redis
 
 
 
 
 volumes:
   postgres_data: 
+  redis-data:
