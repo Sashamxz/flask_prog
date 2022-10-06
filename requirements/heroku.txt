@@ -1,0 +1,4 @@
+# # requirements for Heroku
+-r prod.txt
+gunicorn==19.7.1
+psycopg2==2.7.3

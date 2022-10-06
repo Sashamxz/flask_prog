@@ -11,9 +11,9 @@ RUN useradd -ms /bin/bash flask
 WORKDIR /home/flask
 
 
-COPY requirements.txt requirements.txt
+COPY requirements requirements
 RUN python -m venv env
-RUN env/bin/pip install -r requirements.txt
+RUN env/bin/pip install -r requirements/docker.txt
 RUN env/bin/pip install gunicorn
 
 COPY app app
