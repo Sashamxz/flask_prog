@@ -50,7 +50,8 @@
                 <a href="{{ url_for('main.like_action', post_id=post.id, action='like') }}">Like</a>
               {% endif %}
               {% endif %}
-        {{ post.likes.count() }} likes
+            
+       <text> {{ post.likes.count() }} likes </text>
             </a>
         </p>
 
