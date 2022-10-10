@@ -41,7 +41,7 @@
 
         <p>
           <br>
-            <a href="{{ url_for('main.post_detail', slug = post.slug) }}" style="text-decoration:none;"> {{ post.title }} 
+            <a href="{{ url_for('main.post_detail', slug = post.slug) }}" style="text-decoration:none;"> {{ post.title }}  
               <span id="likes-count-{{post.id}}"> <text>-</text>
             {% if current_user.is_authenticated %}
               {% if current_user.has_liked_post(post) %}
@@ -50,9 +50,9 @@
                 <a href="{{ url_for('main.like_action', post_id=post.id, action='like') }}">Like</a>
               {% endif %}
               {% endif %}
-            
+              </a>
        <text> {{ post.likes.count() }} likes </text>
-            </a>
+            
         </p>
 
     {% endfor %}
