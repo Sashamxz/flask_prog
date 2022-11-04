@@ -1,4 +1,7 @@
 .env_docker
+docker.env
+postgres_data
+
 
 *.log
 *.py[cod]

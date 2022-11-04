@@ -1,4 +1,4 @@
 # # requirements for Heroku
 -r prod.txt
-psycopg2==2.9.1
+psycopg2==2.9.5
 gunicorn==20.1.0

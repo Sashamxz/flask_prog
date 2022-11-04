@@ -37,7 +37,6 @@ MarkupSafe==1.1.1
 packaging==21.3
 passlib==1.7.4
 pluggy==1.0.0
-psycopg2-binary==2.8.6
 py==1.11.0
 pycodestyle==2.7.0
 pyparsing==3.0.9

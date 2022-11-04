@@ -2,22 +2,18 @@ version: '3.8'
 services:
  
   db:
-    image: postgres:14.3
-    
-    env_file: database.conf
-
-    volumes:
-      - ./postgres_data:/var/lib/postgresql/data/
-    
+    environment:
+      POSTGRES_USER: flask
+      POSTGRES_PASSWORD: 12341
+      POSTGRES_DB: test
+    image: postgres:latest
+    networks:
+      - default
     ports:
-      - 5432:5432  
+      - 5405:5432
     restart: always
-
-  redis:
-    image: redis
-    restart: unless-stopped
     volumes:
-      - redis-data:/data
+      - ./postgres-data:/var/lib/postgresql/data
 
   # worker:
   #   image:  flask_proj:latest worker
@@ -39,16 +35,16 @@ services:
     build: .
     ports:
       - "5000:5000"
-    env_file: .env_docker
+    env_file: docker.env
    
     restart: always
     depends_on:
       - db
-      - redis
+      
 
 
 
 
 volumes:
   postgres_data: 
-  redis-data:
+  # redis-data:

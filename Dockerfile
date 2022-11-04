@@ -14,7 +14,8 @@ WORKDIR /home/flask
 COPY requirements requirements
 RUN python -m venv env
 RUN env/bin/pip install -r requirements/docker.txt
-RUN env/bin/pip install gunicorn
+
+
 
 COPY app app
 COPY migrations migrations
