@@ -1,6 +1,8 @@
 .env_docker
 docker.env
 postgres_data
+docker.env
+db.env
 
 
 *.log
