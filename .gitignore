@@ -3,7 +3,7 @@ docker.env
 postgres_data
 docker.env
 db.env
-
+.flaskenv
 
 *.log
 *.py[cod]
