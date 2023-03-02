@@ -1,6 +1,9 @@
 .env_docker
 docker.env
 postgres_data
+docker.env
+db.env
+.flaskenv
 
 *.log
 *.py[cod]
@@ -142,7 +145,3 @@ dmypy.json
 cython_debug/
 data-dev.sqlite
 test.py
-
-
-
-docker.env
