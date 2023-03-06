@@ -1,16 +1,15 @@
 import os
 from distutils.log import error
-from flask import render_template, request, redirect, url_for, flash, make_response, session, current_app
+from flask import render_template, request, redirect, url_for, flash, make_response, \
+                  session, current_app
 from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 from flask_login import login_required, login_user, current_user, logout_user
 from . import main
 from .. import db
 from .forms import PostForm, CommentForm
-from ..models import Post, Subscribe, User, Comment, Permission, Like , ContactUs, MerchItem
+from ..models import Post, Subscribe, User, Comment, Permission, Like, ContactUs, MerchItem
 from werkzeug.security import check_password_hash, generate_password_hash
-
-
 
 
 # news subscription handler
@@ -44,29 +43,26 @@ def subscribe():
             except BaseException:
                 print('db error')
         else:
-            flash('Something wrong! Confirm your entries', category ='error')
+            flash('Something wrong! Confirm your entries', category='error')
 
     return render_template('block.html')
 
 
-
-
-#handler form 'contact_us' at home page
+# handler form 'contact_us' at home page
 @main.route('/contact', methods=['GET', 'POST'])
 def contact():
     email = request.form.get('email')
     name = request.form.get('name')
     subject = request.form.get('subject')
     message = request.form.get('message')
-    if email and message :
-        new_contactus = ContactUs(name=name,email=email, subject=subject, message= message)
+    if email and message:
+        new_contactus = ContactUs(name=name, email=email, subject=subject, message=message)
         db.session.add(new_contactus)
-        db.session.commit() 
-        flash('You were successfully send message !' , category= 'success')
+        db.session.commit()
+        flash('You were successfully send message !', category='success')
     else:
-        flash('Check your entries !' , category= 'error')
+        flash('Check your entries !', category='error')
     return render_template('block.html')
-
 
 
 ###writing messages to the """file""" form at home page "contuct_us"
@@ -84,50 +80,45 @@ def contact():
 #     flash('You were successfully send message !')
 
 
-
-
-
-
-#file extensions that are uploaded to the server are valid
+# file extensions that are uploaded to the server are valid
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in  current_app.config['ALLOWED_EXTENSIONS']
+           filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 
-#page for uploading files to the server
+# page for uploading files to the server
 @main.route('/upload/', methods=['GET', 'POST'])
 @login_required
 def upload_file():
     if request.method == 'POST':
-        
+
         # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part', category='error')
         file = request.files['file']
-      
+
         # if user does not select file, browser also
         # submit an empty part without filename
         if file.filename == '':
             flash('No selected file', category='error')
-            
-        if not allowed_file(file.filename) :
-            flash('Chose correct file format(permitted jpg)' , category='error')
+  
+        if not allowed_file(file.filename):
+            flash('Chose correct file format(permitted jpg)', category='error')
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-            flash( '{"filename" : "%s"}' % filename, category='success' )
+            flash('{"filename" : "%s"}' % filename, category='success' )
 
-    return render_template ('upload.html')
-        
+    return render_template('upload.html')      
 
 
-#viewing messages from users from the "contact us" form
+# viewing messages from users from the "contact us" form
 @main.route('/contact/message', methods=['GET'])
 @login_required
 def show_contact_msg():
     if current_user.can(Permission.MODERATE) or current_user.can(Permission.ADMIN):
-        page = request.args.get('page') 
+        page = request.args.get('page')
 
         if page and page.isdigit():
             page = int(page)
@@ -135,14 +126,13 @@ def show_contact_msg():
             page = 1
 
         messages = ContactUs.query.order_by(ContactUs.created.desc())
-        pages = messages.paginate(page=page, per_page=5)  #create pagination page
+        pages = messages.paginate(page=page, per_page=5)  # create pagination page
 
-        return render_template('messages_contact.html', messages = messages, pages=pages)
+        return render_template('messages_contact.html', messages=messages, pages=pages)
     return render_template('block.html')
-    
 
 
-#creating a new blog post
+# creating a new blog post
 @main.route('/create-post', methods=['POST', 'GET'])
 @login_required
 def create_post():
@@ -153,7 +143,7 @@ def create_post():
             user_id = current_user.id
             try:
                 post = Post(title=title, body=body, author_id=user_id)
-                db.session.add(post) #add post in db
+                db.session.add(post)   # add post in db
                 db.session.commit()
             except BaseException:
                 print('error db.add 498e238e')
@@ -163,7 +153,7 @@ def create_post():
         form = PostForm()
         return render_template('create_post.html', form=form)
     else:    
-        flash('No access', category ='error')
+        flash('No access', category='error')
     return redirect(url_for('main.index'))
 
 
@@ -185,7 +175,7 @@ def edit_post(slug):
         form = PostForm(obj=post)
         return render_template('edit_post.html', post=post, form=form)
     else:
-        flash('No access', category ='error')
+        flash('No access', category='error')
     return redirect(url_for('main.index'))
 
 
@@ -224,15 +214,14 @@ def delete_post(slug):
         post = Post.query.filter(Post.slug == slug).first()
         if not post:
             flash("Post does not exist.", category='error')
-        
-          
+
         else:
             db.session.delete(post)
             db.session.commit()
             flash('Post deleted.', category='success')
     else:
         flash('You do not have permission to delete this post.', category='error')
-    
+
     return redirect (url_for('main.index'))
 
 
@@ -277,7 +266,7 @@ def post_detail(slug):
     if form.validate_on_submit():
         if post:
             # add comment in database
-           
+     
             comment = Comment(
                 body=form.body.data, author=current_user._get_current_object(), post=post,)
             db.session.add(comment)
@@ -292,14 +281,13 @@ def post_detail(slug):
     pagination_lim = 3 
     comments = Comment.query.order_by(Comment.timestamp.desc())
     pages = comments.paginate(page=page, per_page=5)
-    
 
-    return render_template('post_d.html', post=post, 
-                            comments=comments, page=page, pages=pages, form = form, pagination_lim=pagination_lim)    
+    return render_template('post_d.html', post=post,
+                           comments=comments, page=page, pages=pages, form=form,
+                           pagination_lim=pagination_lim)
 
 
-
-# like/ulike post      
+# like/ulike post   
 @main.route('/like/<int:post_id>/<action>')
 @login_required
 def like_action(post_id, action):
@@ -320,11 +308,10 @@ def helper():
     return 'this is help page'
 
 
-# user id  
+# user id
 @main.route('/user/<int:id>/')
 def user_profile(id):
     return "Profile page of user #{}".format(id)
-
 
 
 @main.route('/export_posts')

@@ -1,14 +1,10 @@
 import os
-from pickle import FALSE
+# from pickle import FALSE
 from dotenv import load_dotenv
-
-
 
 
 load_dotenv()
 basedir = os.path.join(os.path.dirname(__file__))
-
-
 
 
 class Config:
@@ -19,7 +15,7 @@ class Config:
     WTF_CSRF_ENABLED = False
     SECURITY_PASSWORD_SALT = os.getenv('SALT')
     SECURITY_PASSWORD_HASH = 'bcrypt'
-    FLASKY_COMMENTS_PER_PAGE  = 5
+    FLASKY_COMMENTS_PER_PAGE = 5
     MAIL_SERVER = os.getenv('MAIL_SERVER')
     MAIL_PORT = int(os.getenv('MAIL_PORT'))
     MAIL_USE_TLS = 1
@@ -27,9 +23,9 @@ class Config:
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
     ADMINS = ['zontick99@gmail.com']
     ALLOWED_EXTENSIONS = os.getenv('ALLOWED_EXTENSIONS')
-    UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER') 
+    UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
     REDIS_URL = os.getenv('REDIS_URL') or 'redis://'
-    
+
     @staticmethod
     def init_app(app):
         pass
@@ -49,7 +45,6 @@ class TestingConfig(Config):
     WTF_CSRF_ENABLED = False
 
 
-
 class ProductionConfig(Config):
     pass
 
@@ -61,11 +56,9 @@ class HerokuConfig(ProductionConfig):
         'sqlite:///' + os.path.join(basedir, 'app.db')
 
 
-
 class DockerConfig(Config):
-    
     SQLALCHEMY_DATABASE_URI = os.getenv('DOCKER_DATABASE_URL')
-    
+
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)
@@ -76,13 +69,11 @@ class DockerConfig(Config):
         file_handler = StreamHandler()
         file_handler.setLevel(logging.INFO)
         app.logger.addHandler(file_handler)
-    
-   
 
 
-config = {
+config_dict = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
     'docker': DockerConfig,
-    'heroku': HerokuConfig }
+    'heroku': HerokuConfig}

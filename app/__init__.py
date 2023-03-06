@@ -1,18 +1,18 @@
-import os
+# import os
 import rq
-import logging
-from logging.handlers import SMTPHandler, RotatingFileHandler
+# import logging
+# from logging.handlers import SMTPHandler, RotatingFileHandler
 from redis import Redis
 from flask import Flask
-from elasticsearch import Elasticsearch
+# from elasticsearch import Elasticsearch
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
-from config import config
-
+from flask_cors import CORS
+from config import config_dict
 
 
 bootstrap = Bootstrap()
@@ -25,31 +25,32 @@ login.login_view = 'auth.login'
 login.login_message = ('Please log in to access this page.')
 
 
-
 def create_app(config_name):
     app = Flask(__name__)
 
-    app.config.from_object(config[config_name])
-    config[config_name].init_app(app)
+    app.config.from_object(config_dict[config_name])
+    app.com
     bootstrap.init_app(app)
     login.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
     moment.init_app(app)
     db.init_app(app)
-    
-    #redis task queue
+
+    CORS(app)
+
+    # redis task queue
     app.redis = Redis.from_url(app.config['REDIS_URL'])
     app.task_queue = rq.Queue('flask_proj-tasks', connection=app.redis)
-    
-    #not implemented yet!!!!
-    #app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
-       # if app.config['ELASTICSEARCH_URL'] else None
+
+    # not implemented yet!!!!
+    # app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
+    # if app.config['ELASTICSEARCH_URL'] else None
 
     # blueprint
     from app.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
-    
+
     from app.calend import calend as calend_blueprint
     app.register_blueprint(calend_blueprint, url_prefix='/calendar')
 
@@ -58,12 +59,11 @@ def create_app(config_name):
 
     from app.api import api as api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
-    
+
     from app.sale import sale as sale_bp
     app.register_blueprint(sale_bp, url_prefix='/sale')
 
-    #send massage at email when app crushed
-
+    # send massage at email when app crushed
     # if not app.debug and not app.testing:
     #     if app.config['MAIL_SERVER']:
     #         auth = None
@@ -100,8 +100,3 @@ def create_app(config_name):
     #     app.logger.info('Microblog startup')
 
     return app
-
-
-
-
-from app import models

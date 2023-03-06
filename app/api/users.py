@@ -6,13 +6,10 @@ from app.api.errors import bad_request
 from app.api.auth import token_auth
 
 
-
-
 @api.route('/users/<int:id>', methods=['GET'])
 @token_auth.login_required
 def get_user(id):
     return jsonify(User.query.get_or_404(id).to_dict())
-
 
 
 @api.route('/users', methods=['POST'])

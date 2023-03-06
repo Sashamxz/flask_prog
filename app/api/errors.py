@@ -10,6 +10,7 @@ def error_response(status_code, message=None):
     response.status_code = status_code
     return response
 
+
 def forbidden(message):
     response = jsonify({'error': 'forbidden', 'message': message})
     response.status_code = 403

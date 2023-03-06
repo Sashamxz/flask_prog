@@ -6,9 +6,7 @@ from ..models import User
 from .forms import LoginForm, RegistrationForm
 
 
-
-
-#login form handler 
+# login form handler 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -25,7 +23,7 @@ def login():
     return render_template('auth/login.html', form=form)
 
 
-#logout
+# logout
 @auth.route('/logout')
 @login_required
 def logout():
@@ -34,7 +32,7 @@ def logout():
     return redirect(url_for('main.index'))
 
 
-#register form handler 
+# register form handler 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -45,8 +43,6 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Secceful registered')
-       
+
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
-
-
