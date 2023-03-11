@@ -6,7 +6,7 @@ from ..models import User
 from .forms import LoginForm, RegistrationForm
 
 
-# login form handler 
+# login form handler
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -17,7 +17,7 @@ def login():
             next = request.args.get('next')
             if next is None or not next.startswith('/'):
                 next = url_for('main.index')
-            
+
             return redirect(next)
         flash('Invalid email or password.')
     return render_template('auth/login.html', form=form)
@@ -32,7 +32,7 @@ def logout():
     return redirect(url_for('main.index'))
 
 
-# register form handler 
+# register form handler
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()

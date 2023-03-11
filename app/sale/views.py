@@ -2,6 +2,7 @@ from flask import render_template, request, flash
 from flask_login import current_user, login_required
 from app.models import db, MerchItem, Permission
 from . import sale
+from flask import jsonify
 
 
 # page with a list of merch items for sale
@@ -43,7 +44,7 @@ def add_item_merch():
 @sale.route('/show-item', methods=['GET'])
 @login_required
 def show_item():
-    #check permission
+    # check permission
     if current_user.can(Permission.MODERATE) or current_user.can(Permission.ADMIN):    
         page = request.args.get('page')
 
@@ -51,7 +52,7 @@ def show_item():
             page = int(page)
         else:
             page = 1
-        
+
         items = MerchItem.query.order_by(MerchItem.created.desc())
         pages = items.paginate(page=page, per_page=5)
         return render_template('sales/list_items.html', items=items, pages=pages)
@@ -69,3 +70,7 @@ def item_detail(item_id):
 @login_required
 def buy_merch_item(item_id):
     item = MerchItem.query.filter_by(id=item_id).first()
+    if item:
+        return jsonify({'message': f'Item bought name {item.name}'})
+    else:
+        return jsonify({'message': 'Item not found'}), 404

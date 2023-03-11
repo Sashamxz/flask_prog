@@ -29,7 +29,7 @@ def create_app(config_name):
     app = Flask(__name__)
 
     app.config.from_object(config_dict[config_name])
-    app.com
+
     bootstrap.init_app(app)
     login.init_app(app)
     migrate.init_app(app, db)

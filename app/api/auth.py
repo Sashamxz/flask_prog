@@ -27,6 +27,3 @@ def verify_token(token):
 @token_auth.error_handler
 def token_auth_error(status):
     return error_response(status)
-
-
-

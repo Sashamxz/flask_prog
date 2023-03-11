@@ -21,7 +21,6 @@ class Config:
     MAIL_USE_TLS = 1
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
-    ADMINS = ['zontick99@gmail.com']
     ALLOWED_EXTENSIONS = os.getenv('ALLOWED_EXTENSIONS')
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
     REDIS_URL = os.getenv('REDIS_URL') or 'redis://'
@@ -76,4 +75,5 @@ config_dict = {
     'testing': TestingConfig,
     'production': ProductionConfig,
     'docker': DockerConfig,
-    'heroku': HerokuConfig}
+    'heroku': HerokuConfig,
+    'default': DevelopmentConfig, }

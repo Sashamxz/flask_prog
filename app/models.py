@@ -1,7 +1,7 @@
 import re
 import base64
 import os
-import rq 
+import rq
 import redis
 import json
 from time import time
@@ -14,9 +14,7 @@ from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-
-
-#create tag for post
+# create tag for post
 post_tags = db.Table(
     'post_tags', db.Column(
         'post_id', db.Integer, db.ForeignKey('posts.id')), db.Column(
@@ -28,7 +26,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-#premission for users(role_id)
+# premission for users(role_id)
 class Permission:
     FOLLOW = 1
     COMMENT = 2
@@ -37,7 +35,7 @@ class Permission:
     ADMIN = 16
 
 
-#Roles for users
+# Roles for users
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer(), primary_key=True)
@@ -51,7 +49,7 @@ class Role(db.Model):
         if self.permissions is None:
             self.permissions = 0
 
-    #need run command befor create first user!
+    # need run command befor create first user!
     @staticmethod
     def insert_roles():
         roles = {
@@ -91,14 +89,13 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 
-
-#create slug for post
+# create slug for post
 def slugify(stringg):
     pattern = r'[^\w+]'
     return re.sub(pattern, '-', stringg)
 
 
-#User 
+# User
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer(), primary_key=True)
@@ -110,13 +107,14 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     posts = db.relationship('Post', backref='user', passive_deletes=True)
     comments = db.relationship('Comment', backref='author', passive_deletes=True)
-    liked = db.relationship('Like', foreign_keys='Like.user_id', backref='user', passive_deletes=True)
+    liked = db.relationship('Like', foreign_keys='Like.user_id', backref='user',
+                            passive_deletes=True)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
     tasks = db.relationship('Task', backref='user', lazy='dynamic')
     notifications = db.relationship('Notification', backref='user',
                                     lazy='dynamic')
-    
+
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         if self.role is None:
@@ -152,13 +150,13 @@ class User(UserMixin, db.Model):
 
     def is_administrator(self):
         return self.can(Permission.ADMIN)
-   
+
     def to_dict(self, include_email=False):
         data = {
             'id': self.id,
             'username': self.username,
             'last_seen': self.last_seen.isoformat() + 'Z',
-          
+
         }
         if include_email:
             data['email'] = self.email
@@ -189,9 +187,8 @@ class User(UserMixin, db.Model):
         if user is None or user.token_expiration < datetime.utcnow():
             return None
         return user
- 
-    #tasks
 
+    # tasks
     def add_notification(self, name, data):
         self.notifications.filter_by(name=name).delete()
         n = Notification(name=name, payload_json=json.dumps(data), user=self)
@@ -213,12 +210,8 @@ class User(UserMixin, db.Model):
         return Task.query.filter_by(name=name, user=self,
                                     complete=False).first()
 
-
-
     def __repr__(self):
         return '<User: {}>'.format(self.username)
-
-
 
 
 class Post(db.Model):
@@ -229,9 +222,8 @@ class Post(db.Model):
     body = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    likes = db.relationship('Like', backref='post', passive_deletes=True,  lazy='dynamic')
+    likes = db.relationship('Like', backref='post', passive_deletes=True, lazy='dynamic')
     comments = db.relationship('Comment', backref='post', lazy='dynamic', passive_deletes=True)
-
 
     def __init__(self, *args, **kwargs):
         super(Post, self).__init__(*args, **kwargs)
@@ -247,7 +239,7 @@ class Post(db.Model):
     def generate_slug(self):
         if self.title:
             self.slug = slugify(self.title)
-    
+
     def to_json(self):
         json_post = {
             'url': url_for('api.get_post', id=self.id),
@@ -256,7 +248,7 @@ class Post(db.Model):
             'timestamp': self.created,
             'author_url': url_for('api.get_user', id=self.author_id),
             'comment_count': self.comments.count(),
-            'likes': self.likes.count() 
+            'likes': self.likes.count()
         }
         return json_post
 
@@ -265,12 +257,10 @@ class Post(db.Model):
         body = json_post.get('body')
         if body is None or body == '':
             raise ValidationError('post does not have a body')
-        return Post(body=body)  
+        return Post(body=body)
 
     def __repr__(self):
         return '<Post id: {}, title: {}>'.format(self.id, self.title)
-
-
 
 
 class Tag(db.Model):
@@ -287,10 +277,8 @@ class Tag(db.Model):
         return '{}'.format(self.name)
 
 
-
-
 class Task(db.Model):
-    __tablename__= 'tasks'
+    __tablename__ = 'tasks'
     id = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(128), index=True)
     description = db.Column(db.String(128))
@@ -309,11 +297,8 @@ class Task(db.Model):
         return job.meta.get('progress', 0) if job is not None else 100
 
 
-
-
-
 class Notification(db.Model):
-    __tablename__= 'notifications'
+    __tablename__ = 'notifications'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -324,21 +309,15 @@ class Notification(db.Model):
         return json.loads(str(self.payload_json))
 
 
-
-
-#Subscribe get news in a home page 
+# Subscribe get news in a home page
 class Subscribe(db.Model):
-    __tablename__= 'sabscribe'
+    __tablename__ = 'sabscribe'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True)
     time = db.Column(db.DateTime, default=datetime.now)
 
 
-
-
-
-
-#comments for post 
+# comments for post
 class Comment(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
@@ -349,8 +328,7 @@ class Comment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id', ondelete="CASCADE"), nullable=False)
 
 
-
-#likes for post
+# likes for post
 class Like(db.Model):
     __tablename__ = 'likes'
     id = db.Column(db.Integer, primary_key=True)
@@ -359,8 +337,7 @@ class Like(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id', ondelete="CASCADE"), nullable=False)
 
 
-
-#contack us form in a home page 
+# contack us form in a home page
 class ContactUs(db.Model):
     __tablename__ = 'contuct_us'
     id = db.Column(db.Integer, primary_key=True)
@@ -371,13 +348,12 @@ class ContactUs(db.Model):
     message = db.Column(db.Text)
 
 
-
-#sales items 
+# sales items
 class MerchItem(db.Model):
     __tablename__ = 'merch_item'
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, default=datetime.now)
     name = db.Column(db.String(50), nullable=False, unique=True)
-    description = db.Column(db.Text , nullable=False)
+    description = db.Column(db.Text, nullable=False)
     price = db.Column(db.Integer, default=0)
     active = db.Column(db.Boolean(), default=True)

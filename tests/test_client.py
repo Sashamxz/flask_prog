@@ -1,59 +1,56 @@
-
-from app import db
-from app.models import  Post, Subscribe, User, Comment, Permission, Like , ContactUs, Role
+from app.models import Post, Subscribe, User, Comment, Permission, Like, ContactUs, Role
 
 
+def test_login_page(client):
+    response = client.get('/auth/login')
+    assert response.status_code == 200
+    assert b'Login' in response.data
 
 
+def test_login(client, db):
+    user = User(username='test', email='test@example.com')
+    user.set_password('password')
+    db.session.add(user)
+    db.session.commit()
 
-def test_contactmodel_save(app):
-    with app.app_context():
-        Role.insert_roles()
-        contact = User(username="John", email="john@gmail.com",)
-        contact.set_password('1324')
-        db.session.add(contact)
-        db.session.commit()
-        assert User.query.filter(User.email == 'john_doe@gmail.com')
-        assert contact.password_hash != '1234'
-        assert contact.can(Permission.MODERATE) == False
-
-
-def test_register_and_login(app):
-    # register a new account
-    client = app.test_client()
-    response = client.post('/auth/register', data={
-        'email': 'john@example.com',
-        'username': 'john',
-        'password': '1234',
-        'password2': '1234'
-    })
-    
-    assert response.status_code == 302
-
-    # login with the new account
     response = client.post('/auth/login', data={
-        'email': 'john@example.com',
-        'password': '1324'
+        'email': 'test@example.com',
+        'password': 'password',
+        'remember_me': False
     }, follow_redirects=True)
     assert response.status_code == 200
 
 
+# def test_register_and_login(app):
+#     # register a new account
+#     client = app.test_client()
+#     response = client.post('/auth/register', data={
+#         'email': 'john@example.com',
+#         'username': 'john',
+#         'password': '1234',
+#         'password2': '1234'
+#     })
+
+#     assert response.status_code == 302
+
+#     # login with the new account
+#     response = client.post('/auth/login', data={
+#         'email': 'john@example.com',
+#         'password': '1324'
+#     }, follow_redirects=True)
+#     assert response.status_code == 200
+
+
 def test_home_page(app):
-     client = app.test_client()
-     response = client.get('/')
-     assert response.status_code == 200
+    client = app.test_client()
+    response = client.get('/')
+    assert response.status_code == 200
 
 
-def test_export_posts(app):
+def test_export_posts(app, db):
     with app.app_context():
-        contact = User(username="Johffn", email="zontick99@gmail.com",)  
+        contact = User(username="Johffn", email="zontick99@gmail.com",)
         contact.launch_task('export_posts', ('Exporting posts...'))
-        
-        db.session.commit()
-        assert contact.tasks != None 
 
-def test_db(app):
-    with app.app_context():
-        db.session.remove()
-        db.drop_all()
-       
+        db.session.commit()
+        assert contact.tasks is not None

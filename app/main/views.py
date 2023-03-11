@@ -1,7 +1,6 @@
 import os
 from distutils.log import error
-from flask import render_template, request, redirect, url_for, flash, make_response, \
-                  session, current_app
+from flask import render_template, request, redirect, url_for, flash, make_response, current_app
 from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 from flask_login import login_required, login_user, current_user, logout_user
@@ -20,7 +19,7 @@ def subscribe():
             sub_cl = request.form.get('email')
             param = None
 
-            #a record of those who subscribed to the """file"""
+            # a record of those who subscribed to the """file"""
             # with open ('client.txt', 'a', encoding='utf-8') as f:
             #     f.write(f'{sub_cl} \n ' )
             #     flash('You were successfully subscribe !')
@@ -65,10 +64,10 @@ def contact():
     return render_template('block.html')
 
 
-###writing messages to the """file""" form at home page "contuct_us"
+# writing messages to the """file""" form at home page "contuct_us"
 # with open('client.txt', 'a', encoding='utf-8') as f:
 #     text = ' '
-#     count = 0 
+#     count = 0
 #     for letter in message:
 #         text = text+ letter
 #         count += 1
@@ -101,16 +100,16 @@ def upload_file():
         # submit an empty part without filename
         if file.filename == '':
             flash('No selected file', category='error')
-  
+
         if not allowed_file(file.filename):
             flash('Chose correct file format(permitted jpg)', category='error')
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-            flash('{"filename" : "%s"}' % filename, category='success' )
+            flash('{"filename" : "%s"}' % filename, category='success')
 
-    return render_template('upload.html')      
+    return render_template('upload.html')
 
 
 # viewing messages from users from the "contact us" form
@@ -152,13 +151,12 @@ def create_post():
 
         form = PostForm()
         return render_template('create_post.html', form=form)
-    else:    
+    else:
         flash('No access', category='error')
     return redirect(url_for('main.index'))
 
 
-
-#edit post
+# edit post
 @main.route('/<slug>/edit', methods=['POST', 'GET'])
 @login_required
 def edit_post(slug):
@@ -179,8 +177,7 @@ def edit_post(slug):
     return redirect(url_for('main.index'))
 
 
-
-#list titles of posts
+# list titles of posts
 @main.route('/blog/posts', methods=['GET', 'POST'])
 def index():
     # search only among posts with "search?q="
@@ -204,8 +201,7 @@ def index():
     return render_template('index.html', posts=posts, pages=pages, page=page)
 
 
-
-#removal post by slag
+# removal post by slag
 @main.route('/<slug>/delete-post', methods=['POST', 'GET'])
 @login_required
 def delete_post(slug):
@@ -222,8 +218,7 @@ def delete_post(slug):
     else:
         flash('You do not have permission to delete this post.', category='error')
 
-    return redirect (url_for('main.index'))
-
+    return redirect(url_for('main.index'))
 
 
 # delete comment by id
@@ -245,8 +240,7 @@ def delete_comment(comment_id):
     return redirect(url_for('main.index'))
 
 
-
-# home page 
+# home page
 @main.route('/', methods=['GET', 'POST'])
 @main.route('/home', methods=['GET', 'POST'])
 def home_view():
@@ -254,8 +248,7 @@ def home_view():
     return render_template('block.html')
 
 
-
-#detailed information about the post with comments
+# detailed information about the post with comments
 @main.route('/post/<slug>/', methods=['GET', 'POST'])
 def post_detail(slug):
     post_id = Post.query.filter(Post.slug == slug).first().id
@@ -266,7 +259,6 @@ def post_detail(slug):
     if form.validate_on_submit():
         if post:
             # add comment in database
-     
             comment = Comment(
                 body=form.body.data, author=current_user._get_current_object(), post=post,)
             db.session.add(comment)
@@ -278,7 +270,7 @@ def post_detail(slug):
         page = int(page)
     else:
         page = 1
-    pagination_lim = 3 
+    pagination_lim = 3
     comments = Comment.query.order_by(Comment.timestamp.desc())
     pages = comments.paginate(page=page, per_page=5)
 
@@ -287,7 +279,7 @@ def post_detail(slug):
                            pagination_lim=pagination_lim)
 
 
-# like/ulike post   
+# like/ulike post
 @main.route('/like/<int:post_id>/<action>')
 @login_required
 def like_action(post_id, action):

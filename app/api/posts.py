@@ -20,10 +20,10 @@ def get_posts():
     posts = pagination.items
     prev = None
     if pagination.has_prev:
-        prev = url_for('api.get_posts', page=page-1)
+        prev = url_for('api.get_posts', page=page - 1)
     next = None
     if pagination.has_next:
-        next = url_for('api.get_posts', page=page+1)
+        next = url_for('api.get_posts', page=page + 1)
     return jsonify({
         'posts': [post.to_json() for post in posts],
         'prev': prev,
